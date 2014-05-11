@@ -43,79 +43,28 @@ namespace IboxTestTCP
             public VarRecord_t[] Variables;
 
         }
-        public PlotModel myModel = new PlotModel();
-
-        public PageData_t[] Pages = new PageData_t[MAX_PAGES];
+        
+        public static PageData_t[] Pages = new PageData_t[MAX_PAGES];
         public VarRecord_t[] IboxCSVread = new VarRecord_t[2500];
+        public VarRecord_t[] TempVarRec = new VarRecord_t[50];
         public int ImpVariableCount,SelectedPage;
+        int counter;
+        
+        public static Timer ShVarUpdTimer = new Timer();
+        public static ComboBox ShPgSelCombo = new ComboBox();
       
         public Form1()
         {
              
              
             InitializeComponent();
-
-            for (int i = 0; i < MAX_PAGES; i++ )
-            {
-                Pages[i].Variables = new VarRecord_t[50];
-            }
-
             LoadDefault();
-            
-            PageSelectCombo.SelectedIndex = 0;
 
-            myModel.Background = OxyColors.White;
-            myModel.PlotAreaBackground = OxyColors.White;
-            
-            var Axis1 = new LinearAxis();
-            var Axis2 = new LinearAxis();
-            var TimeAxis = new DateTimeAxis();
+            VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
 
-            var Series1 = new FunctionSeries(Math.Sin, 0, 10, 0.1, "Sin(x)");
-            var Series2 = new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)");
+            ShVarUpdTimer = VarupdateTimer;
+            ShPgSelCombo = VarViewPgSelCombo;
             
-
-            Axis1.MajorGridlineColor = OxyColors.Gray;
-            Axis1.MajorGridlineStyle = LineStyle.Dash;
-            Axis1.MinorGridlineStyle = LineStyle.Dot;
-            Axis1.AxislineColor = OxyColors.Red;
-            Axis1.TextColor = OxyColors.Red;
-            Axis1.Position = AxisPosition.Right;
-            Axis1.Key = "MPH";
-            
-            
-            
-            
-            Axis2.AxisDistance = 35;
-            Axis2.AxislineColor = OxyColors.Blue;
-            Axis2.TextColor = OxyColors.Blue;
-            Axis2.Position = AxisPosition.Right; 
-            Axis2.Key = "RPM";
-
-            TimeAxis.MajorGridlineStyle = LineStyle.Dash;
-            TimeAxis.MinorGridlineStyle = LineStyle.Dot;
-            TimeAxis.Position = AxisPosition.Bottom;
-
-            
-            
-            myModel.LegendTitle = null;
-            myModel.LegendOrientation = LegendOrientation.Horizontal;
-            myModel.LegendPlacement = LegendPlacement.Outside;
-            myModel.LegendPosition = LegendPosition.TopRight;
-            myModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
-            myModel.LegendBorder = OxyColors.Black;
-            
-            Series1.YAxisKey = "RPM";
-            Series1.Color = OxyColors.Red;
-            Series2.YAxisKey = "MPH";
-            Series2.Color = OxyColors.Blue;
-            
-            myModel.Axes.Add(Axis1);
-            myModel.Axes.Add(Axis2);
-            myModel.Axes.Add(TimeAxis);
-            myModel.Series.Add(Series1);
-            myModel.Series.Add(Series2);
-            this.plot1.Model = myModel;
 
         }
 
@@ -218,9 +167,15 @@ namespace IboxTestTCP
 
         private void LoadDefault ()
         {
-            int ActPage;
+                int ActPage;
                 String InPutLine;
                 String[] InlineItems;
+                
+                for (int i = 0; i < MAX_PAGES; i++)
+                {
+                    Pages[i].Variables = new VarRecord_t[50];
+                }
+            
                 FileStream inStr = new FileStream("DefaultConfig.csv", FileMode.Open);
                 var file = new StreamReader(inStr, Encoding.ASCII);
                 while(!file.EndOfStream)
@@ -264,6 +219,16 @@ namespace IboxTestTCP
                 for (int i=0; i<ConfPageCount;i++)
                 {
                     VarViewPgSelCombo.Items.Add(Pages[i].Name);
+                }
+                PageSelectCombo.SelectedIndex = 0;
+                VarViewPgSelCombo.SelectedIndex = 0;
+
+                for (int i = 0; i < Pages[0].VarCount; i++)
+                {
+                    String BoxName = "Var" + (i + 1).ToString() + "Gr";
+                    var Item = this.Controls.Find(BoxName, true);
+                    Item[0].Text = Pages[0].Variables[i].Name;
+                    Item[0].Visible = true;
                 }
         }
 
@@ -345,5 +310,93 @@ namespace IboxTestTCP
             int ActPage = PageSelectCombo.SelectedIndex;
             Pages[ActPage].Variables[PageVarList.SelectedIndex].Ratems = Int16.Parse(this.RateSelectCombo.GetItemText(this.RateSelectCombo.SelectedItem));
         }
+
+        private void VarViewPgSelCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            for (int i = 0; i < 24; i++)
+            {
+                String BoxName = "Var" + (i + 1).ToString() + "Gr";
+                var Item = this.Controls.Find(BoxName, true);
+                Item[0].Visible = false;
+            }
+
+            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+            {
+                String BoxName = "Var" + (i + 1).ToString() + "Gr";
+                var Item = this.Controls.Find(BoxName, true);
+                Item[0].Text = Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Name;
+                Item[0].Visible = true;
+            }
+        }
+
+        private void RemVarFromPageButt_Click(object sender, EventArgs e)
+        {
+            int VarCnt = Pages[PageSelectCombo.SelectedIndex].VarCount;
+            int ItemToRem = PageVarList.SelectedIndex;
+            
+            for (int i=0;i<VarCnt;i++)
+            {
+                TempVarRec[i].Name = Pages[PageSelectCombo.SelectedIndex].Variables[i].Name;
+                TempVarRec[i].Address = Pages[PageSelectCombo.SelectedIndex].Variables[i].Address;
+                TempVarRec[i].Length = Pages[PageSelectCombo.SelectedIndex].Variables[i].Length;
+                TempVarRec[i].Mult = Pages[PageSelectCombo.SelectedIndex].Variables[i].Mult;
+                TempVarRec[i].Offset = Pages[PageSelectCombo.SelectedIndex].Variables[i].Offset;
+                TempVarRec[i].Ratems = Pages[PageSelectCombo.SelectedIndex].Variables[i].Ratems;
+            }
+
+            for(int i=ItemToRem+1; i<VarCnt;i++)
+            {
+                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Name = TempVarRec[i].Name;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Address = TempVarRec[i].Address;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Length = TempVarRec[i].Length;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Mult = TempVarRec[i].Mult;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Offset = TempVarRec[i].Offset;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Ratems = TempVarRec[i].Ratems;
+            }
+            Pages[PageSelectCombo.SelectedIndex].VarCount--;
+            PageVarList.Items.Clear();
+            for(int i=0;i<VarCnt-1;i++)
+            {
+                PageVarList.Items.Add(Pages[PageSelectCombo.SelectedIndex].Variables[i].Name);
+            }
+            PageVarList.Invalidate();
+            PageVarList.Update();
+        }
+
+        private void IboxCSVImpList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            AddVarToPageButt.Enabled = true;
+        }
+
+        private void VarupdateTimer_Tick(object sender, EventArgs e)
+        {
+            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+            {
+                String BoxName = "Var" + (i).ToString();
+                var Item = this.Controls.Find(BoxName, true);
+                Item[0].Text = counter.ToString();
+            }
+            counter++;
+        }
+
+        private void ConnectButt_Click(object sender, EventArgs e)
+        {
+            if (VarupdateTimer.Enabled)
+                VarupdateTimer.Enabled = false;
+            else
+            {
+                VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
+                VarupdateTimer.Enabled = true;
+
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Form2 NewForm = new Form2();
+            NewForm.Show();
+        }
+
     }
 }
