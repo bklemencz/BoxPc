@@ -7,9 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OxyPlot;
-using OxyPlot.Series;
-using OxyPlot.Axes;
 using System.IO;
 
 namespace IboxTestTCP
