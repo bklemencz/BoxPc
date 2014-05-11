@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>izenda.ZedGraph</id>
+    <version>4.2.4.2411</version>
+    <title>ZedGraph</title>
+    <authors>jchampion,  kooseefoo,  rjosulli</authors>
+    <owners>jchampion,  kooseefoo,  rjosulli</owners>
+    <licenseUrl>http://sourceforge.net/directory/license:lgpl/</licenseUrl>
+    <projectUrl>http://sourceforge.net/projects/zedgraph/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
+  </metadata>
+</package>
