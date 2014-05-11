@@ -32,12 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OxyPlot">
-      <HintPath>..\packages\OxyPlot.WindowsForms.2014.1.299.1\lib\NET45\OxyPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.WindowsForms">
-      <HintPath>..\packages\OxyPlot.WindowsForms.2014.1.299.1\lib\NET45\OxyPlot.WindowsForms.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
