@@ -36,6 +36,16 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.plot1 = new OxyPlot.WindowsForms.Plot();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.CountLabel = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.UpdAllButt = new System.Windows.Forms.Button();
+            this.SaveToFile = new System.Windows.Forms.Button();
+            this.SaveDefConfButt = new System.Windows.Forms.Button();
+            this.RemVarFromPageButt = new System.Windows.Forms.Button();
+            this.AddVarToPageButt = new System.Windows.Forms.Button();
+            this.RateSelectCombo = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.PageVarList = new System.Windows.Forms.ListBox();
             this.label7 = new System.Windows.Forms.Label();
             this.PageSelectCombo = new System.Windows.Forms.ComboBox();
             this.IboxImpIDText = new System.Windows.Forms.TextBox();
@@ -58,16 +68,6 @@
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.PageVarList = new System.Windows.Forms.ListBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.RateSelectCombo = new System.Windows.Forms.ComboBox();
-            this.AddVarToPageButt = new System.Windows.Forms.Button();
-            this.RemVarFromPageButt = new System.Windows.Forms.Button();
-            this.SaveToFile = new System.Windows.Forms.Button();
-            this.SaveDefConfButt = new System.Windows.Forms.Button();
-            this.UpdAllButt = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.CountLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
@@ -185,6 +185,106 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Variable Settings";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // CountLabel
+            // 
+            this.CountLabel.AutoSize = true;
+            this.CountLabel.Location = new System.Drawing.Point(703, 51);
+            this.CountLabel.Name = "CountLabel";
+            this.CountLabel.Size = new System.Drawing.Size(25, 17);
+            this.CountLabel.TabIndex = 27;
+            this.CountLabel.Text = "ID:";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(1249, 178);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(100, 31);
+            this.button2.TabIndex = 26;
+            this.button2.Text = "Reset Orig";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // UpdAllButt
+            // 
+            this.UpdAllButt.Location = new System.Drawing.Point(1249, 142);
+            this.UpdAllButt.Name = "UpdAllButt";
+            this.UpdAllButt.Size = new System.Drawing.Size(100, 31);
+            this.UpdAllButt.TabIndex = 25;
+            this.UpdAllButt.Text = "Update ";
+            this.UpdAllButt.UseVisualStyleBackColor = true;
+            // 
+            // SaveToFile
+            // 
+            this.SaveToFile.Location = new System.Drawing.Point(1249, 105);
+            this.SaveToFile.Name = "SaveToFile";
+            this.SaveToFile.Size = new System.Drawing.Size(100, 31);
+            this.SaveToFile.TabIndex = 24;
+            this.SaveToFile.Text = "Save To File";
+            this.SaveToFile.UseVisualStyleBackColor = true;
+            // 
+            // SaveDefConfButt
+            // 
+            this.SaveDefConfButt.Location = new System.Drawing.Point(951, 50);
+            this.SaveDefConfButt.Name = "SaveDefConfButt";
+            this.SaveDefConfButt.Size = new System.Drawing.Size(100, 31);
+            this.SaveDefConfButt.TabIndex = 23;
+            this.SaveDefConfButt.Text = "Save Default";
+            this.SaveDefConfButt.UseVisualStyleBackColor = true;
+            this.SaveDefConfButt.Click += new System.EventHandler(this.SaveDefConfButt_Click);
+            // 
+            // RemVarFromPageButt
+            // 
+            this.RemVarFromPageButt.Location = new System.Drawing.Point(297, 371);
+            this.RemVarFromPageButt.Name = "RemVarFromPageButt";
+            this.RemVarFromPageButt.Size = new System.Drawing.Size(100, 31);
+            this.RemVarFromPageButt.TabIndex = 20;
+            this.RemVarFromPageButt.Text = "Remove Sel";
+            this.RemVarFromPageButt.UseVisualStyleBackColor = true;
+            // 
+            // AddVarToPageButt
+            // 
+            this.AddVarToPageButt.Location = new System.Drawing.Point(297, 334);
+            this.AddVarToPageButt.Name = "AddVarToPageButt";
+            this.AddVarToPageButt.Size = new System.Drawing.Size(100, 31);
+            this.AddVarToPageButt.TabIndex = 19;
+            this.AddVarToPageButt.Text = "Add To Page";
+            this.AddVarToPageButt.UseVisualStyleBackColor = true;
+            this.AddVarToPageButt.Click += new System.EventHandler(this.AddVarToPageButt_Click);
+            // 
+            // RateSelectCombo
+            // 
+            this.RateSelectCombo.FormattingEnabled = true;
+            this.RateSelectCombo.Items.AddRange(new object[] {
+            "5",
+            "10",
+            "20",
+            "50",
+            "100",
+            "200",
+            "500",
+            "1000"});
+            this.RateSelectCombo.Location = new System.Drawing.Point(518, 467);
+            this.RateSelectCombo.Name = "RateSelectCombo";
+            this.RateSelectCombo.Size = new System.Drawing.Size(169, 24);
+            this.RateSelectCombo.TabIndex = 18;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(400, 470);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(121, 17);
+            this.label8.TabIndex = 17;
+            this.label8.Text = "Sample Rate(ms):";
+            // 
+            // PageVarList
+            // 
+            this.PageVarList.FormattingEnabled = true;
+            this.PageVarList.ItemHeight = 16;
+            this.PageVarList.Location = new System.Drawing.Point(403, 51);
+            this.PageVarList.Name = "PageVarList";
+            this.PageVarList.Size = new System.Drawing.Size(284, 404);
+            this.PageVarList.TabIndex = 16;
             // 
             // label7
             // 
@@ -375,106 +475,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // PageVarList
-            // 
-            this.PageVarList.FormattingEnabled = true;
-            this.PageVarList.ItemHeight = 16;
-            this.PageVarList.Location = new System.Drawing.Point(403, 51);
-            this.PageVarList.Name = "PageVarList";
-            this.PageVarList.Size = new System.Drawing.Size(284, 404);
-            this.PageVarList.TabIndex = 16;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(400, 470);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(121, 17);
-            this.label8.TabIndex = 17;
-            this.label8.Text = "Sample Rate(ms):";
-            // 
-            // RateSelectCombo
-            // 
-            this.RateSelectCombo.FormattingEnabled = true;
-            this.RateSelectCombo.Items.AddRange(new object[] {
-            "5",
-            "10",
-            "20",
-            "50",
-            "100",
-            "200",
-            "500",
-            "1000"});
-            this.RateSelectCombo.Location = new System.Drawing.Point(518, 467);
-            this.RateSelectCombo.Name = "RateSelectCombo";
-            this.RateSelectCombo.Size = new System.Drawing.Size(169, 24);
-            this.RateSelectCombo.TabIndex = 18;
-            // 
-            // AddVarToPageButt
-            // 
-            this.AddVarToPageButt.Location = new System.Drawing.Point(297, 334);
-            this.AddVarToPageButt.Name = "AddVarToPageButt";
-            this.AddVarToPageButt.Size = new System.Drawing.Size(100, 31);
-            this.AddVarToPageButt.TabIndex = 19;
-            this.AddVarToPageButt.Text = "Add To Page";
-            this.AddVarToPageButt.UseVisualStyleBackColor = true;
-            this.AddVarToPageButt.Click += new System.EventHandler(this.AddVarToPageButt_Click);
-            // 
-            // RemVarFromPageButt
-            // 
-            this.RemVarFromPageButt.Location = new System.Drawing.Point(297, 371);
-            this.RemVarFromPageButt.Name = "RemVarFromPageButt";
-            this.RemVarFromPageButt.Size = new System.Drawing.Size(100, 31);
-            this.RemVarFromPageButt.TabIndex = 20;
-            this.RemVarFromPageButt.Text = "Remove Sel";
-            this.RemVarFromPageButt.UseVisualStyleBackColor = true;
-            // 
-            // SaveToFile
-            // 
-            this.SaveToFile.Location = new System.Drawing.Point(1249, 105);
-            this.SaveToFile.Name = "SaveToFile";
-            this.SaveToFile.Size = new System.Drawing.Size(100, 31);
-            this.SaveToFile.TabIndex = 24;
-            this.SaveToFile.Text = "Save To File";
-            this.SaveToFile.UseVisualStyleBackColor = true;
-            // 
-            // SaveDefConfButt
-            // 
-            this.SaveDefConfButt.Location = new System.Drawing.Point(1249, 68);
-            this.SaveDefConfButt.Name = "SaveDefConfButt";
-            this.SaveDefConfButt.Size = new System.Drawing.Size(100, 31);
-            this.SaveDefConfButt.TabIndex = 23;
-            this.SaveDefConfButt.Text = "Save Default";
-            this.SaveDefConfButt.UseVisualStyleBackColor = true;
-            this.SaveDefConfButt.Click += new System.EventHandler(this.SaveDefConfButt_Click);
-            // 
-            // UpdAllButt
-            // 
-            this.UpdAllButt.Location = new System.Drawing.Point(1249, 142);
-            this.UpdAllButt.Name = "UpdAllButt";
-            this.UpdAllButt.Size = new System.Drawing.Size(100, 31);
-            this.UpdAllButt.TabIndex = 25;
-            this.UpdAllButt.Text = "Update ";
-            this.UpdAllButt.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(1249, 178);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(100, 31);
-            this.button2.TabIndex = 26;
-            this.button2.Text = "Reset Orig";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // CountLabel
-            // 
-            this.CountLabel.AutoSize = true;
-            this.CountLabel.Location = new System.Drawing.Point(703, 51);
-            this.CountLabel.Name = "CountLabel";
-            this.CountLabel.Size = new System.Drawing.Size(25, 17);
-            this.CountLabel.TabIndex = 27;
-            this.CountLabel.Text = "ID:";
             // 
             // Form1
             // 
