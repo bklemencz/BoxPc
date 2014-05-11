@@ -22,6 +22,7 @@ namespace IboxTestTCP
     public partial class Form1 : Form
     {
         public const int MAX_PAGES = 10;
+        public int ConfPageCount =10;
         public struct VarRecord_t
         {
             public String Name;
@@ -60,14 +61,15 @@ namespace IboxTestTCP
             }
 
             LoadDefault();
+            
             PageSelectCombo.SelectedIndex = 0;
 
-                myModel.Background = OxyColors.White;
+            myModel.Background = OxyColors.White;
             myModel.PlotAreaBackground = OxyColors.White;
             
             var Axis1 = new LinearAxis();
             var Axis2 = new LinearAxis();
-            var Xaxis = new LinearAxis();
+            var TimeAxis = new DateTimeAxis();
 
             var Series1 = new FunctionSeries(Math.Sin, 0, 10, 0.1, "Sin(x)");
             var Series2 = new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)");
@@ -84,15 +86,15 @@ namespace IboxTestTCP
             
             
             
-            Axis2.AxisDistance = 50;
+            Axis2.AxisDistance = 35;
             Axis2.AxislineColor = OxyColors.Blue;
             Axis2.TextColor = OxyColors.Blue;
             Axis2.Position = AxisPosition.Right; 
             Axis2.Key = "RPM";
 
-            Xaxis.MajorGridlineStyle = LineStyle.Dash;
-            Xaxis.MinorGridlineStyle = LineStyle.Dot;
-            Xaxis.Position = AxisPosition.Bottom;
+            TimeAxis.MajorGridlineStyle = LineStyle.Dash;
+            TimeAxis.MinorGridlineStyle = LineStyle.Dot;
+            TimeAxis.Position = AxisPosition.Bottom;
 
             
             
@@ -110,7 +112,7 @@ namespace IboxTestTCP
             
             myModel.Axes.Add(Axis1);
             myModel.Axes.Add(Axis2);
-            myModel.Axes.Add(Xaxis);
+            myModel.Axes.Add(TimeAxis);
             myModel.Series.Add(Series1);
             myModel.Series.Add(Series2);
             this.plot1.Model = myModel;
@@ -205,7 +207,6 @@ namespace IboxTestTCP
         private void PageSelectCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedPage = PageSelectCombo.SelectedIndex;
-            CountLabel.Text = Pages[SelectedPage].VarCount.ToString();
             PageVarList.Items.Clear();
             for (int i = 0; i < Pages[SelectedPage].VarCount; i++)
             {
@@ -226,10 +227,22 @@ namespace IboxTestTCP
                 {
                     InPutLine = file.ReadLine();
                     InlineItems = InPutLine.Split(',');
+                    if (InlineItems[0] == "CONFDEF")
+                    {
+                        PageSelectCombo.Items.Clear();
+                        if (Int32.Parse(InlineItems[1]) > MAX_PAGES)
+                        {
+                            ConfPageCount = 10;
+                        } else
+                        {
+                            ConfPageCount = Int32.Parse(InlineItems[1]);
+                        }
+                    } else
                     if(InlineItems[0] == "PAGEDEF")
                     {
                         ActPage = Int32.Parse(InlineItems[1]);
                         Pages[ActPage].Name = InlineItems[2];
+                        PageSelectCombo.Items.Add(InlineItems[2]);
                         Pages[ActPage].VarCount = Int32.Parse(InlineItems[3]);
                         for (int i = 0; i < Pages[ActPage].VarCount;i++ )
                         {
@@ -246,7 +259,12 @@ namespace IboxTestTCP
 
 
                 }
-        
+                file.Close();
+                inStr.Close();
+                for (int i=0; i<ConfPageCount;i++)
+                {
+                    VarViewPgSelCombo.Items.Add(Pages[i].Name);
+                }
         }
 
         private void AddVarToPageButt_Click(object sender, EventArgs e)
@@ -255,8 +273,8 @@ namespace IboxTestTCP
             {
                 if(IboxCSVImpList.GetItemChecked(i))
                 {
-                    
-                    Pages[SelectedPage].Name = PageSelectCombo.SelectedItem.ToString();
+
+                   // Pages[SelectedPage].Name = this.RateSelectCombo.GetItemText(this.RateSelectCombo.SelectedItem);
                     Pages[SelectedPage].Variables[Pages[SelectedPage].VarCount].Name = IboxCSVread[i].Name;
                     Pages[SelectedPage].Variables[Pages[SelectedPage].VarCount].Address = IboxCSVread[i].Address;
                     Pages[SelectedPage].Variables[Pages[SelectedPage].VarCount].Length = IboxCSVread[i].Length;
@@ -278,7 +296,9 @@ namespace IboxTestTCP
                 var file = new StreamWriter(inStr, Encoding.ASCII);
                 OutPutLine = "Name,Address,Length,Multiplier,Offset,Samplerate";
                 file.WriteLine(OutPutLine);
-                for(int i=0; i<MAX_PAGES;i++)
+                OutPutLine = "CONFDEF," + ConfPageCount.ToString();
+                file.WriteLine(OutPutLine);
+                for(int i=0; i<ConfPageCount;i++)
                 {
                     OutPutLine = "PAGEDEF,";
                     OutPutLine += i + ",";
@@ -298,6 +318,32 @@ namespace IboxTestTCP
                 }
                 file.Flush();
                 file.Close();
+                inStr.Close();
+        }
+
+        private void PageVarList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int ActPage = PageSelectCombo.SelectedIndex;
+            Int32 RateIndex;
+            PageVarAddText.Text = Pages[ActPage].Variables[PageVarList.SelectedIndex].Address.ToString("X");
+            PageVarLenText.Text = Pages[ActPage].Variables[PageVarList.SelectedIndex].Length.ToString();
+            PageVarMulText.Text = Pages[ActPage].Variables[PageVarList.SelectedIndex].Mult.ToString();
+            PageVarOffText.Text = Pages[ActPage].Variables[PageVarList.SelectedIndex].Offset.ToString();
+            if ((RateIndex = RateSelectCombo.FindStringExact(Pages[ActPage].Variables[PageVarList.SelectedIndex].Ratems.ToString())) == ListBox.NoMatches)
+            {
+                RateSelectCombo.SelectedIndex = RateSelectCombo.FindStringExact("50");
+            } else
+            {
+                RateSelectCombo.SelectedIndex = RateIndex;
+            }
+
+            
+        }
+
+        private void RateSelectCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int ActPage = PageSelectCombo.SelectedIndex;
+            Pages[ActPage].Variables[PageVarList.SelectedIndex].Ratems = Int16.Parse(this.RateSelectCombo.GetItemText(this.RateSelectCombo.SelectedItem));
         }
     }
 }
