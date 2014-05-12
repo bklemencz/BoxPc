@@ -249,6 +249,7 @@ namespace IboxTestTCP
                 myPane.CurveList.Remove(Curves[ActualItem]);
                 myPane.YAxisList.Remove(AxisY[ActualItem]);
             }
+            
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Update();
@@ -256,7 +257,16 @@ namespace IboxTestTCP
 
         private void GrUpdTimer1_Tick(object sender, EventArgs e)
         {
-            
+            if (IboxTestTCP.Form1.MaxTime < 100)
+            {
+                myPane.XAxis.Scale.Max = 100;
+                myPane.XAxis.Scale.Min = 0;
+            } else
+            {
+                myPane.XAxis.Scale.Min = IboxTestTCP.Form1.MaxTime - 100;
+                myPane.XAxis.Scale.Max = IboxTestTCP.Form1.MaxTime;
+            }
+           
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Update();

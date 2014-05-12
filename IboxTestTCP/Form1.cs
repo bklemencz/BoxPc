@@ -48,6 +48,7 @@ namespace IboxTestTCP
         /// </summary>
 
         public static RollingPointPairList[] Lines = new RollingPointPairList[24];
+        public static int MaxTime;
         public static PageData_t[] Pages = new PageData_t[MAX_PAGES];
         public static Timer ShVarUpdTimer = new Timer();
         public static ComboBox ShPgSelCombo = new ComboBox();
@@ -381,6 +382,7 @@ namespace IboxTestTCP
                 var Item = this.Controls.Find(BoxName, true);
                 Item[0].Text = counter.ToString();
                 Lines[i].Add(counter, counter * 2*(i+1));
+                if (counter > MaxTime) MaxTime = counter;
             }
             counter++;
 
