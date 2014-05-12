@@ -39,9 +39,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1022, 375);
+            this.button1.Location = new System.Drawing.Point(1363, 462);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(188, 23);
+            this.button1.Size = new System.Drawing.Size(251, 28);
             this.button1.TabIndex = 0;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
@@ -61,7 +62,8 @@
             this.zedGraphControl1.IsShowPointValues = false;
             this.zedGraphControl1.IsShowVScrollBar = false;
             this.zedGraphControl1.IsZoomOnMouseCenter = false;
-            this.zedGraphControl1.Location = new System.Drawing.Point(5, 5);
+            this.zedGraphControl1.Location = new System.Drawing.Point(7, 6);
+            this.zedGraphControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.zedGraphControl1.Name = "zedGraphControl1";
             this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
             this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
@@ -74,7 +76,7 @@
             this.zedGraphControl1.ScrollMinX = 0D;
             this.zedGraphControl1.ScrollMinY = 0D;
             this.zedGraphControl1.ScrollMinY2 = 0D;
-            this.zedGraphControl1.Size = new System.Drawing.Size(1011, 443);
+            this.zedGraphControl1.Size = new System.Drawing.Size(1348, 545);
             this.zedGraphControl1.TabIndex = 1;
             this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
             this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
@@ -85,16 +87,18 @@
             // GrVarListCheckBox
             // 
             this.GrVarListCheckBox.FormattingEnabled = true;
-            this.GrVarListCheckBox.Location = new System.Drawing.Point(1022, 5);
+            this.GrVarListCheckBox.Location = new System.Drawing.Point(1363, 6);
+            this.GrVarListCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.GrVarListCheckBox.Name = "GrVarListCheckBox";
-            this.GrVarListCheckBox.Size = new System.Drawing.Size(188, 364);
+            this.GrVarListCheckBox.Size = new System.Drawing.Size(249, 446);
             this.GrVarListCheckBox.TabIndex = 2;
             // 
             // CloseBtn
             // 
-            this.CloseBtn.Location = new System.Drawing.Point(1117, 404);
+            this.CloseBtn.Location = new System.Drawing.Point(1490, 523);
+            this.CloseBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.CloseBtn.Name = "CloseBtn";
-            this.CloseBtn.Size = new System.Drawing.Size(93, 23);
+            this.CloseBtn.Size = new System.Drawing.Size(124, 28);
             this.CloseBtn.TabIndex = 3;
             this.CloseBtn.Text = "Close";
             this.CloseBtn.UseVisualStyleBackColor = true;
@@ -102,18 +106,19 @@
             // 
             // StrtBtn
             // 
-            this.StrtBtn.Location = new System.Drawing.Point(1022, 404);
+            this.StrtBtn.Location = new System.Drawing.Point(1363, 523);
+            this.StrtBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.StrtBtn.Name = "StrtBtn";
-            this.StrtBtn.Size = new System.Drawing.Size(89, 23);
+            this.StrtBtn.Size = new System.Drawing.Size(119, 28);
             this.StrtBtn.TabIndex = 4;
             this.StrtBtn.Text = "Start";
             this.StrtBtn.UseVisualStyleBackColor = true;
             // 
             // Form2
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1211, 454);
+            this.ClientSize = new System.Drawing.Size(1616, 555);
             this.ControlBox = false;
             this.Controls.Add(this.StrtBtn);
             this.Controls.Add(this.CloseBtn);
@@ -121,6 +126,7 @@
             this.Controls.Add(this.zedGraphControl1);
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "Form2";
             this.Opacity = 0.8D;
