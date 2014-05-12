@@ -216,9 +216,19 @@ namespace IboxTestTCP
         
         private void button1_Click(object sender, EventArgs e)
         {
-            IboxTestTCP.Form1.ShVarUpdTimer.Enabled = true;
-            button1.Text = Form1.Pages[0].Name;
-            GrUpdTimer1.Enabled = true;
+            if (!GrUpdTimer1.Enabled)
+            {
+                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = true;
+                button1.Text = "Stop";
+                GrUpdTimer1.Enabled = true;
+                IboxTestTCP.Form1.ShTCPTimer.Enabled = true;
+            } else
+            {
+                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = false;
+                button1.Text = "Start";
+                GrUpdTimer1.Enabled = false;
+                IboxTestTCP.Form1.ShTCPTimer.Enabled = false;
+            }
         }
 
         private void CloseBtn_Click(object sender, EventArgs e)
@@ -270,6 +280,12 @@ namespace IboxTestTCP
             zedGraphControl1.AxisChange();
             zedGraphControl1.Invalidate();
             zedGraphControl1.Update();
+        }
+
+        private void StrtBtn_Click(object sender, EventArgs e)
+        {
+            IboxTestTCP.Form1.counter = 0;
+            IboxTestTCP.Form1.MaxTime = 0;
         }
     }
 }
