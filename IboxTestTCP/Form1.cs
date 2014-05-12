@@ -8,14 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using ZedGraph;
 
 namespace IboxTestTCP
 {
-    
-
        
-    
-    
     public partial class Form1 : Form
     {
         public const int MAX_PAGES = 10;
@@ -41,23 +38,33 @@ namespace IboxTestTCP
 
         }
         
-        public static PageData_t[] Pages = new PageData_t[MAX_PAGES];
         public VarRecord_t[] IboxCSVread = new VarRecord_t[2500];
         public VarRecord_t[] TempVarRec = new VarRecord_t[50];
         public int ImpVariableCount,SelectedPage;
         int counter;
         
+        /// <summary>
+        /// InterForm Communication shared variables
+        /// </summary>
+
+        public static RollingPointPairList[] Lines = new RollingPointPairList[24];
+        public static PageData_t[] Pages = new PageData_t[MAX_PAGES];
         public static Timer ShVarUpdTimer = new Timer();
         public static ComboBox ShPgSelCombo = new ComboBox();
       
         public Form1()
         {
              
-             
+            
             InitializeComponent();
             LoadDefault();
 
-            VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
+            for (int i = 0; i < 24; i++ )
+            {
+                Lines[i] = new RollingPointPairList(2000);
+            }
+
+                VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
 
             ShVarUpdTimer = VarupdateTimer;
             ShPgSelCombo = VarViewPgSelCombo;
@@ -373,8 +380,10 @@ namespace IboxTestTCP
                 String BoxName = "Var" + (i).ToString();
                 var Item = this.Controls.Find(BoxName, true);
                 Item[0].Text = counter.ToString();
+                Lines[i].Add(counter, counter * 2*(i+1));
             }
             counter++;
+
         }
 
         private void ConnectButt_Click(object sender, EventArgs e)
