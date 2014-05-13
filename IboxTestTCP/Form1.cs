@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 using ZedGraph;
@@ -15,8 +18,21 @@ namespace IboxTestTCP
        
     public partial class Form1 : Form
     {
+        //[DllImport("winmm.dll", EntryPoint = "timeBeginPeriod", SetLastError = true)]
+        //public static extern uint TimeBeginPeriod(uint uMilliseconds);
+
+        //[DllImport("winmm.dll", EntryPoint = "timeEndPeriod", SetLastError = true)]
+        //public static extern uint TimeEndPeriod(uint uMilliseconds);
+
+        [DllImport("winmm.dll")]
+        internal static extern uint timeBeginPeriod(uint period);
+
+        [DllImport("winmm.dll")]
+        internal static extern uint timeEndPeriod(uint period);
+
         public const int MAX_PAGES = 10;
         public int ConfPageCount =10;
+
         public struct VarRecord_t
         {
             public String Name;
@@ -41,34 +57,46 @@ namespace IboxTestTCP
         public VarRecord_t[] IboxCSVread = new VarRecord_t[2500];
         public VarRecord_t[] TempVarRec = new VarRecord_t[50];
         public int ImpVariableCount,SelectedPage;
-        int counter;
+
+        public static Stopwatch Stopper1 = new Stopwatch();
+        public System.Threading.Timer ThTimer;
         
         /// <summary>
         /// InterForm Communication shared variables
         /// </summary>
 
+        
+
+        
         public static RollingPointPairList[] Lines = new RollingPointPairList[24];
-        public static int MaxTime;
+        public static int MaxTime,ShGrUpdateTime;
         public static PageData_t[] Pages = new PageData_t[MAX_PAGES];
-        public static Timer ShVarUpdTimer = new Timer();
+        public static System.Windows.Forms.Timer ShVarUpdTimer = new System.Windows.Forms.Timer();
+        public static System.Windows.Forms.Timer ShTCPTimer = new System.Windows.Forms.Timer();
         public static ComboBox ShPgSelCombo = new ComboBox();
+        public static int counter;
+        
       
         public Form1()
         {
-             
-            
+
+            timeBeginPeriod(1);
+            //System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
             InitializeComponent();
             LoadDefault();
 
             for (int i = 0; i < 24; i++ )
             {
-                Lines[i] = new RollingPointPairList(2000);
+                Lines[i] = new RollingPointPairList(200);
             }
 
                 VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
 
             ShVarUpdTimer = VarupdateTimer;
+            ShTCPTimer = TCPReadTimer;
             ShPgSelCombo = VarViewPgSelCombo;
+            ShGrUpdateTime = Int32.Parse(GraphUpdateMs.Text);
+            
             
 
         }
@@ -381,29 +409,59 @@ namespace IboxTestTCP
                 String BoxName = "Var" + (i).ToString();
                 var Item = this.Controls.Find(BoxName, true);
                 Item[0].Text = counter.ToString();
-                Lines[i].Add(counter, counter * 2*(i+1));
-                if (counter > MaxTime) MaxTime = counter;
             }
-            counter++;
 
         }
 
         private void ConnectButt_Click(object sender, EventArgs e)
         {
             if (VarupdateTimer.Enabled)
+            {
                 VarupdateTimer.Enabled = false;
+                TCPReadTimer.Enabled = false;
+            }
             else
             {
                 VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
                 VarupdateTimer.Enabled = true;
-
+                TCPReadTimer.Enabled = true;
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void ShowGraph_Click(object sender, EventArgs e)
         {
             Form2 NewForm = new Form2();
             NewForm.Show();
+        }
+
+        private void GraphUpdateMs_TextChanged(object sender, EventArgs e)
+        {
+            ShGrUpdateTime = Int32.Parse(GraphUpdateMs.Text);
+        }
+        
+        private void TCPReadTimer_Tick(object sender, EventArgs e)
+        {
+            
+            if (Stopper1.IsRunning)
+         {
+             Stopper1.Stop();
+             label70.Text = Stopper1.ElapsedMilliseconds.ToString();
+         } else
+         {
+             Stopper1.Reset();
+             Stopper1.Start();
+         }
+            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+            { 
+                Lines[i].Add(counter, counter * 2*(i+1));
+                if (counter > MaxTime) MaxTime = counter;
+            }
+            counter++;
+        }
+
+        private void TCPUpdMs_TextChanged(object sender, EventArgs e)
+        {
+            TCPReadTimer.Interval = Int32.Parse(TCPUpdMs.Text);
         }
 
     }

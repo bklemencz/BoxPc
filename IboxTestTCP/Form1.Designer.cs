@@ -226,7 +226,7 @@
             this.label65 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label69 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.TCPUpdMs = new System.Windows.Forms.TextBox();
             this.label68 = new System.Windows.Forms.Label();
             this.textBox74 = new System.Windows.Forms.TextBox();
             this.label63 = new System.Windows.Forms.Label();
@@ -240,6 +240,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.VarupdateTimer = new System.Windows.Forms.Timer(this.components);
             this.TCPReadTimer = new System.Windows.Forms.Timer(this.components);
+            this.label70 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.Var24Gr.SuspendLayout();
@@ -287,6 +288,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label70);
             this.tabPage1.Controls.Add(this.button4);
             this.tabPage1.Controls.Add(this.button3);
             this.tabPage1.Controls.Add(this.Var24Gr);
@@ -330,9 +332,9 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(200, 23);
             this.button4.TabIndex = 16;
-            this.button4.Text = "Start Logging";
+            this.button4.Text = "Show Graph";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.ShowGraph_Click);
             // 
             // button3
             // 
@@ -351,7 +353,6 @@
             this.Var24Gr.Controls.Add(this.label54);
             this.Var24Gr.Controls.Add(this.label55);
             this.Var24Gr.Controls.Add(this.Var23);
-            this.Var24Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var24Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var24Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var24Gr.ForeColor = System.Drawing.Color.Blue;
@@ -427,7 +428,6 @@
             this.Var20Gr.Controls.Add(this.label46);
             this.Var20Gr.Controls.Add(this.label47);
             this.Var20Gr.Controls.Add(this.Var19);
-            this.Var20Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var20Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var20Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var20Gr.ForeColor = System.Drawing.Color.Blue;
@@ -503,7 +503,6 @@
             this.Var23Gr.Controls.Add(this.label56);
             this.Var23Gr.Controls.Add(this.label57);
             this.Var23Gr.Controls.Add(this.Var22);
-            this.Var23Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var23Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var23Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var23Gr.ForeColor = System.Drawing.Color.Blue;
@@ -579,7 +578,6 @@
             this.Var22Gr.Controls.Add(this.label58);
             this.Var22Gr.Controls.Add(this.label59);
             this.Var22Gr.Controls.Add(this.Var21);
-            this.Var22Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var22Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var22Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var22Gr.ForeColor = System.Drawing.Color.Blue;
@@ -655,7 +653,6 @@
             this.Var16Gr.Controls.Add(this.label38);
             this.Var16Gr.Controls.Add(this.label39);
             this.Var16Gr.Controls.Add(this.Var15);
-            this.Var16Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var16Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var16Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var16Gr.ForeColor = System.Drawing.Color.Blue;
@@ -731,7 +728,6 @@
             this.Var21Gr.Controls.Add(this.label60);
             this.Var21Gr.Controls.Add(this.label61);
             this.Var21Gr.Controls.Add(this.Var20);
-            this.Var21Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var21Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var21Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var21Gr.ForeColor = System.Drawing.Color.Blue;
@@ -807,7 +803,6 @@
             this.Var19Gr.Controls.Add(this.label48);
             this.Var19Gr.Controls.Add(this.label49);
             this.Var19Gr.Controls.Add(this.Var18);
-            this.Var19Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var19Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var19Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var19Gr.ForeColor = System.Drawing.Color.Blue;
@@ -883,7 +878,6 @@
             this.Var12Gr.Controls.Add(this.label30);
             this.Var12Gr.Controls.Add(this.label31);
             this.Var12Gr.Controls.Add(this.var11);
-            this.Var12Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var12Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var12Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var12Gr.ForeColor = System.Drawing.Color.Blue;
@@ -959,7 +953,6 @@
             this.Var18Gr.Controls.Add(this.label50);
             this.Var18Gr.Controls.Add(this.label51);
             this.Var18Gr.Controls.Add(this.Var17);
-            this.Var18Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var18Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var18Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var18Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1035,7 +1028,6 @@
             this.Var17Gr.Controls.Add(this.label52);
             this.Var17Gr.Controls.Add(this.label53);
             this.Var17Gr.Controls.Add(this.Var16);
-            this.Var17Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var17Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var17Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var17Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1111,7 +1103,6 @@
             this.Var15Gr.Controls.Add(this.label40);
             this.Var15Gr.Controls.Add(this.label41);
             this.Var15Gr.Controls.Add(this.Var14);
-            this.Var15Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var15Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var15Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var15Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1187,7 +1178,6 @@
             this.Var8Gr.Controls.Add(this.label22);
             this.Var8Gr.Controls.Add(this.label23);
             this.Var8Gr.Controls.Add(this.var7);
-            this.Var8Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var8Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var8Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var8Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1263,7 +1253,6 @@
             this.Var14Gr.Controls.Add(this.label42);
             this.Var14Gr.Controls.Add(this.label43);
             this.Var14Gr.Controls.Add(this.Var13);
-            this.Var14Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var14Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var14Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var14Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1339,7 +1328,6 @@
             this.Var13Gr.Controls.Add(this.label44);
             this.Var13Gr.Controls.Add(this.label45);
             this.Var13Gr.Controls.Add(this.Var12);
-            this.Var13Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var13Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var13Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var13Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1415,7 +1403,6 @@
             this.Var11Gr.Controls.Add(this.label32);
             this.Var11Gr.Controls.Add(this.label33);
             this.Var11Gr.Controls.Add(this.Var10);
-            this.Var11Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var11Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var11Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var11Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1491,7 +1478,6 @@
             this.Var4Gr.Controls.Add(this.label20);
             this.Var4Gr.Controls.Add(this.label21);
             this.Var4Gr.Controls.Add(this.Var3);
-            this.Var4Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var4Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var4Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var4Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1567,7 +1553,6 @@
             this.Var10Gr.Controls.Add(this.label34);
             this.Var10Gr.Controls.Add(this.label35);
             this.Var10Gr.Controls.Add(this.Var9);
-            this.Var10Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var10Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var10Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var10Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1643,7 +1628,6 @@
             this.Var9Gr.Controls.Add(this.label36);
             this.Var9Gr.Controls.Add(this.label37);
             this.Var9Gr.Controls.Add(this.Var8);
-            this.Var9Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var9Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var9Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var9Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1719,7 +1703,6 @@
             this.Var7Gr.Controls.Add(this.label24);
             this.Var7Gr.Controls.Add(this.label25);
             this.Var7Gr.Controls.Add(this.Var6);
-            this.Var7Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var7Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var7Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var7Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1795,7 +1778,6 @@
             this.Var3Gr.Controls.Add(this.label18);
             this.Var3Gr.Controls.Add(this.label19);
             this.Var3Gr.Controls.Add(this.Var2);
-            this.Var3Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var3Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var3Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var3Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1871,7 +1853,6 @@
             this.Var6Gr.Controls.Add(this.label26);
             this.Var6Gr.Controls.Add(this.label27);
             this.Var6Gr.Controls.Add(this.Var5);
-            this.Var6Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var6Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var6Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var6Gr.ForeColor = System.Drawing.Color.Blue;
@@ -1947,7 +1928,6 @@
             this.Var5Gr.Controls.Add(this.label28);
             this.Var5Gr.Controls.Add(this.label29);
             this.Var5Gr.Controls.Add(this.Var4);
-            this.Var5Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var5Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var5Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var5Gr.ForeColor = System.Drawing.Color.Blue;
@@ -2023,7 +2003,6 @@
             this.Var2Gr.Controls.Add(this.label16);
             this.Var2Gr.Controls.Add(this.label17);
             this.Var2Gr.Controls.Add(this.Var1);
-            this.Var2Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var2Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var2Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var2Gr.ForeColor = System.Drawing.Color.Blue;
@@ -2099,7 +2078,6 @@
             this.Var1Gr.Controls.Add(this.label15);
             this.Var1Gr.Controls.Add(this.label14);
             this.Var1Gr.Controls.Add(this.Var0);
-            this.Var1Gr.Cursor = System.Windows.Forms.Cursors.Default;
             this.Var1Gr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Var1Gr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Var1Gr.ForeColor = System.Drawing.Color.Blue;
@@ -2226,7 +2204,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1252, 561);
+            this.tabPage3.Size = new System.Drawing.Size(1252, 463);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Variable Settings";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -2599,32 +2577,16 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(1252, 561);
+            this.tabPage4.Size = new System.Drawing.Size(1252, 463);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Application Settings";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // zedGraphControl1
             // 
-            this.zedGraphControl1.IsAutoScrollRange = false;
-            this.zedGraphControl1.IsEnableHPan = true;
-            this.zedGraphControl1.IsEnableHZoom = true;
-            this.zedGraphControl1.IsEnableVPan = true;
-            this.zedGraphControl1.IsEnableVZoom = true;
-            this.zedGraphControl1.IsScrollY2 = false;
-            this.zedGraphControl1.IsShowContextMenu = true;
-            this.zedGraphControl1.IsShowCursorValues = false;
-            this.zedGraphControl1.IsShowHScrollBar = false;
-            this.zedGraphControl1.IsShowPointValues = false;
-            this.zedGraphControl1.IsShowVScrollBar = false;
-            this.zedGraphControl1.IsZoomOnMouseCenter = false;
             this.zedGraphControl1.Location = new System.Drawing.Point(263, 6);
             this.zedGraphControl1.Name = "zedGraphControl1";
-            this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
-            this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
-            this.zedGraphControl1.PanModifierKeys2 = System.Windows.Forms.Keys.None;
-            this.zedGraphControl1.PointDateFormat = "g";
-            this.zedGraphControl1.PointValueFormat = "G";
+            this.zedGraphControl1.ScrollGrace = 0D;
             this.zedGraphControl1.ScrollMaxX = 0D;
             this.zedGraphControl1.ScrollMaxY = 0D;
             this.zedGraphControl1.ScrollMaxY2 = 0D;
@@ -2633,11 +2595,6 @@
             this.zedGraphControl1.ScrollMinY2 = 0D;
             this.zedGraphControl1.Size = new System.Drawing.Size(646, 349);
             this.zedGraphControl1.TabIndex = 5;
-            this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
-            this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
-            this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
-            this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
-            this.zedGraphControl1.ZoomStepFraction = 0.1D;
             // 
             // groupBox2
             // 
@@ -2672,6 +2629,7 @@
             this.GraphUpdateMs.TabIndex = 5;
             this.GraphUpdateMs.Text = "100";
             this.GraphUpdateMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.GraphUpdateMs.TextChanged += new System.EventHandler(this.GraphUpdateMs_TextChanged);
             // 
             // label66
             // 
@@ -2697,7 +2655,7 @@
             this.VarUpdateMs.Name = "VarUpdateMs";
             this.VarUpdateMs.Size = new System.Drawing.Size(51, 26);
             this.VarUpdateMs.TabIndex = 1;
-            this.VarUpdateMs.Text = "100";
+            this.VarUpdateMs.Text = "200";
             this.VarUpdateMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label65
@@ -2712,7 +2670,7 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label69);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.TCPUpdMs);
             this.groupBox1.Controls.Add(this.label68);
             this.groupBox1.Controls.Add(this.textBox74);
             this.groupBox1.Controls.Add(this.label63);
@@ -2735,14 +2693,15 @@
             this.label69.TabIndex = 7;
             this.label69.Text = "ms";
             // 
-            // textBox1
+            // TCPUpdMs
             // 
-            this.textBox1.Location = new System.Drawing.Point(135, 90);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(53, 26);
-            this.textBox1.TabIndex = 5;
-            this.textBox1.Text = "5";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TCPUpdMs.Location = new System.Drawing.Point(135, 90);
+            this.TCPUpdMs.Name = "TCPUpdMs";
+            this.TCPUpdMs.Size = new System.Drawing.Size(53, 26);
+            this.TCPUpdMs.TabIndex = 5;
+            this.TCPUpdMs.Text = "5";
+            this.TCPUpdMs.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TCPUpdMs.TextChanged += new System.EventHandler(this.TCPUpdMs_TextChanged);
             // 
             // label68
             // 
@@ -2835,7 +2794,22 @@
             // 
             // VarupdateTimer
             // 
+            this.VarupdateTimer.Interval = 200;
             this.VarupdateTimer.Tick += new System.EventHandler(this.VarupdateTimer_Tick);
+            // 
+            // TCPReadTimer
+            // 
+            this.TCPReadTimer.Interval = 10;
+            this.TCPReadTimer.Tick += new System.EventHandler(this.TCPReadTimer_Tick);
+            // 
+            // label70
+            // 
+            this.label70.AutoSize = true;
+            this.label70.Location = new System.Drawing.Point(681, 8);
+            this.label70.Name = "label70";
+            this.label70.Size = new System.Drawing.Size(41, 13);
+            this.label70.TabIndex = 17;
+            this.label70.Text = "label70";
             // 
             // Form1
             // 
@@ -3121,12 +3095,13 @@
         private System.Windows.Forms.Label label63;
         private System.Windows.Forms.TextBox textBox73;
         private System.Windows.Forms.Label label62;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox TCPUpdMs;
         private System.Windows.Forms.Label label68;
-        private System.Windows.Forms.Timer TCPReadTimer;
         private System.Windows.Forms.Label label69;
         private ZedGraph.ZedGraphControl zedGraphControl1;
         public System.Windows.Forms.Timer VarupdateTimer;
+        public System.Windows.Forms.Timer TCPReadTimer;
+        private System.Windows.Forms.Label label70;
     }
 }
 
