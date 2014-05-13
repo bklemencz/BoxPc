@@ -17,6 +17,7 @@ namespace IboxTestTCP
         public GraphPane myPane = new GraphPane();
         public LineItem[] Curves = new LineItem[24];
         public YAxis[] AxisY = new YAxis[25];
+        
         public Form2()
         {
             InitializeComponent();
@@ -37,10 +38,6 @@ namespace IboxTestTCP
             for (int i = 0; i < IboxTestTCP.Form1.Pages[IboxTestTCP.Form1.ShPgSelCombo.SelectedIndex].VarCount; i++)
             {
                 GrVarListCheckBox.Items.Add(IboxTestTCP.Form1.Pages[IboxTestTCP.Form1.ShPgSelCombo.SelectedIndex].Variables[i].Name);
-                
-                
-
-
             }
         }
 
