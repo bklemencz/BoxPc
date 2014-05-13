@@ -43,19 +43,17 @@
             // GrVarListCheckBox
             // 
             this.GrVarListCheckBox.FormattingEnabled = true;
-            this.GrVarListCheckBox.Location = new System.Drawing.Point(1363, 6);
-            this.GrVarListCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.GrVarListCheckBox.Location = new System.Drawing.Point(1022, 5);
             this.GrVarListCheckBox.Name = "GrVarListCheckBox";
-            this.GrVarListCheckBox.Size = new System.Drawing.Size(249, 429);
+            this.GrVarListCheckBox.Size = new System.Drawing.Size(188, 349);
             this.GrVarListCheckBox.TabIndex = 2;
             this.GrVarListCheckBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.GrVarListCheckBox_ItemCheck);
             // 
             // CloseBtn
             // 
-            this.CloseBtn.Location = new System.Drawing.Point(1491, 523);
-            this.CloseBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.CloseBtn.Location = new System.Drawing.Point(1118, 425);
             this.CloseBtn.Name = "CloseBtn";
-            this.CloseBtn.Size = new System.Drawing.Size(124, 28);
+            this.CloseBtn.Size = new System.Drawing.Size(93, 23);
             this.CloseBtn.TabIndex = 3;
             this.CloseBtn.Text = "Close";
             this.CloseBtn.UseVisualStyleBackColor = true;
@@ -63,10 +61,9 @@
             // 
             // StrtBtn
             // 
-            this.StrtBtn.Location = new System.Drawing.Point(1363, 523);
-            this.StrtBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.StrtBtn.Location = new System.Drawing.Point(1022, 425);
             this.StrtBtn.Name = "StrtBtn";
-            this.StrtBtn.Size = new System.Drawing.Size(119, 28);
+            this.StrtBtn.Size = new System.Drawing.Size(89, 23);
             this.StrtBtn.TabIndex = 4;
             this.StrtBtn.Text = "Start";
             this.StrtBtn.UseVisualStyleBackColor = true;
@@ -78,8 +75,8 @@
             // 
             // zedGraphControl1
             // 
-            this.zedGraphControl1.Location = new System.Drawing.Point(4, 6);
-            this.zedGraphControl1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.zedGraphControl1.Location = new System.Drawing.Point(3, 5);
+            this.zedGraphControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.zedGraphControl1.Name = "zedGraphControl1";
             this.zedGraphControl1.ScrollGrace = 0D;
             this.zedGraphControl1.ScrollMaxX = 0D;
@@ -88,21 +85,23 @@
             this.zedGraphControl1.ScrollMinX = 0D;
             this.zedGraphControl1.ScrollMinY = 0D;
             this.zedGraphControl1.ScrollMinY2 = 0D;
-            this.zedGraphControl1.Size = new System.Drawing.Size(1351, 545);
+            this.zedGraphControl1.Size = new System.Drawing.Size(1013, 443);
             this.zedGraphControl1.TabIndex = 5;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1363, 439);
+            this.label1.Location = new System.Drawing.Point(1022, 357);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 17);
+            this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 6;
             this.label1.Text = "Time Range:";
             // 
             // XAxisUpdown
             // 
-            this.XAxisUpdown.Location = new System.Drawing.Point(1458, 437);
+            this.XAxisUpdown.Location = new System.Drawing.Point(1094, 355);
+            this.XAxisUpdown.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.XAxisUpdown.Maximum = new decimal(new int[] {
             600,
             0,
@@ -114,7 +113,7 @@
             0,
             0});
             this.XAxisUpdown.Name = "XAxisUpdown";
-            this.XAxisUpdown.Size = new System.Drawing.Size(78, 22);
+            this.XAxisUpdown.Size = new System.Drawing.Size(58, 20);
             this.XAxisUpdown.TabIndex = 7;
             this.XAxisUpdown.Value = new decimal(new int[] {
             30,
@@ -126,17 +125,18 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1542, 439);
+            this.label2.Location = new System.Drawing.Point(1156, 357);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(15, 17);
+            this.label2.Size = new System.Drawing.Size(12, 13);
             this.label2.TabIndex = 8;
             this.label2.Text = "s";
             // 
             // Form2
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1632, 571);
+            this.ClientSize = new System.Drawing.Size(1215, 453);
             this.ControlBox = false;
             this.Controls.Add(this.label2);
             this.Controls.Add(this.XAxisUpdown);
@@ -146,7 +146,6 @@
             this.Controls.Add(this.CloseBtn);
             this.Controls.Add(this.GrVarListCheckBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "Form2";
             this.ShowIcon = false;

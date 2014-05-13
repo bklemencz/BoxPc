@@ -59,6 +59,7 @@ namespace IboxTestTCP
         public VarRecord_t[] IboxCSVread = new VarRecord_t[2500];
         public VarRecord_t[] TempVarRec = new VarRecord_t[50];
         public int ImpVariableCount,SelectedPage;
+        public string LastSerialLine;
 
         public static Stopwatch Stopper1 = new Stopwatch();
         public System.Threading.Timer ThTimer;
@@ -121,7 +122,8 @@ namespace IboxTestTCP
             {
                 SerPortList.Items.Add(s);
             }
-            SerPortList.SelectedIndex = 0;
+            if (SerPortList.Items.Count != 0)
+                SerPortList.SelectedIndex = 0;
             SerPBaudList.SelectedIndex = 1;
             EthCommGroup.Enabled = false;
             SerComGroup.Enabled = true;
@@ -501,7 +503,7 @@ namespace IboxTestTCP
             {
                 SerPortList.Items.Add(s);
             }
-            SerPortList.SelectedIndex = 0;
+            //SerPortList.SelectedIndex = 0;
         }
 
         private void TabChange_SelectedIndexChanged(object sender, EventArgs e)
@@ -523,7 +525,10 @@ namespace IboxTestTCP
             file.WriteLine(OutPutLine);
             OutPutLine = "EthPort," + EthPortTxtBox.Text; 
             file.WriteLine(OutPutLine);
-            OutPutLine = "Serport," + SerPortList.SelectedItem.ToString(); 
+            if (SerPortList.Items.Count != 0)
+                OutPutLine = "Serport," + SerPortList.SelectedItem.ToString();
+            else
+                OutPutLine = "Serport,0";
             file.WriteLine(OutPutLine);
             OutPutLine = "SerBaud," + SerPBaudList.SelectedItem.ToString(); 
             file.WriteLine(OutPutLine);
@@ -588,10 +593,10 @@ namespace IboxTestTCP
         {
             if (!serialPort1.IsOpen)
             {
-                serialPort1.PortName = SerPortList.SelectedItem.ToString();
-                serialPort1.BaudRate = Int32.Parse(SerPBaudList.SelectedItem.ToString());
                 try
                 {
+                    serialPort1.PortName = SerPortList.SelectedItem.ToString();
+                    serialPort1.BaudRate = Int32.Parse(SerPBaudList.SelectedItem.ToString());
                     serialPort1.Open();
                 }
                 catch (Exception ex)
@@ -609,15 +614,16 @@ namespace IboxTestTCP
             string[] LineItems;
             if (serialPort1.IsOpen)
             {
-                serialPort1.WriteLine("//VER");
-                /////// 
+                 
+                //////////////////////////////////////// 
                 //Read First Line After Version Request
-                ///////
+                ////////////////////////////////////////
                 #region SerialVerReq  
                 try
                 {
+                    serialPort1.WriteLine("/VER");
                     LastLine = serialPort1.ReadLine();
-                    LineItems = LastLine.Split("//".ToCharArray());
+                    LineItems = LastLine.Split('/');
                     if (LineItems.Length == 3)
                     {
                         if (LineItems[1] == "BKBOX")
@@ -649,12 +655,111 @@ namespace IboxTestTCP
                 }
             }
             #endregion SerialVerReq
+                
+                ////////////////////////////////////////////////////
+                // Try to send the variable information of the page
+                ////////////////////////////////////////////////////
+                #region SerialSendPageInfo
+            if (serialPort1.IsOpen)
+            {
+                try
+                {
+                    serialPort1.WriteLine("/PAGE/" + Pages[VarViewPgSelCombo.SelectedIndex].VarCount.ToString());
+                    LastLine = serialPort1.ReadLine();
+                    if (LastLine == "/OK")
+                    {
+                        for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                        {
+                            LastLine = '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Address.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Length.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Mult.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Offset.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Ratems.ToString();
+                            serialPort1.WriteLine(LastLine);
+                            LastLine = serialPort1.ReadLine();
+                            if (LastLine != "/OK")
+                            {
+                                MessageBox.Show("Communication Protocol Error!\nSERAIL PORT CLOSED!");
+                                serialPort1.Close();
+                                i = Pages[VarViewPgSelCombo.SelectedIndex].VarCount;
+                                BoxState = 0;
+                                return;
+                            }
+                        }
+                        BoxState = 3;
+                    }
+                }
+                catch (Exception Ex)
+                {
+
+                    MessageBox.Show("Communication Protocol Error!\nSERAIL PORT CLOSED!");
+                    serialPort1.Close();
+                    BoxState = 0;
+                    return;
+                }
+            }
+            #endregion SerialSendPageInfo
+        }
+
+        private void StartSerialStream()
+        {
+            string LastLine;
+            if (serialPort1.IsOpen)
+            {
+                try
+                {
+                    serialPort1.WriteLine("/STRTSTREAM");
+                    LastLine = serialPort1.ReadLine();
+                    if (LastLine == "/OK")
+                    {
+                        SerialReadTimer.Enabled = true;
+                    }
+                }
+                catch (Exception Ex)
+                {
+                    MessageBox.Show("Communication Protocol Error!\nSERAIL PORT CLOSED!");
+                    serialPort1.Close();
+                    BoxState = 0;
+                    return;            
+                }
+            } else
+            {
+                MessageBox.Show("Serial Port Not Opened");
+            }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             SerialConnect();
             SerialHandShake();
+        }
+
+        private void SerialReadTimer_Tick(object sender, EventArgs e)
+        {
+            char LastSerialChar;
+            string[] LastItems;
+            int TimeRead;
+            if (serialPort1.IsOpen)
+            {
+                while (serialPort1.BytesToRead > 0)
+                {
+                    LastSerialChar = (char) serialPort1.ReadChar();
+                    if (LastSerialChar != '\n')
+                    {
+                        LastSerialLine += LastSerialChar;
+                    } else
+                    {
+                        LastItems = LastSerialLine.Split(',');
+                        TimeRead = Int32.Parse(LastItems[0]);
+                        MaxTime = TimeRead;
+                        for (int i=0;i<Pages[VarViewPgSelCombo.SelectedIndex].VarCount;i++)
+                        {
+                            
+                            Lines[i].Add(TimeRead, Int32.Parse(LastItems[i + 1]));
+                        }
+                    }
+                }
+            }
         }
        
 
