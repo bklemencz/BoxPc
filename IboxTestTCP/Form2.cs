@@ -17,6 +17,7 @@ namespace IboxTestTCP
         public GraphPane myPane = new GraphPane();
         public LineItem[] Curves = new LineItem[24];
         public YAxis[] AxisY = new YAxis[25];
+        public int XAxisRange;
         
         public Form2()
         {
@@ -25,6 +26,8 @@ namespace IboxTestTCP
             InitColors();
             InitControls();
             initGraph2();
+            XAxisRange = (Int32)(Int32)XAxisUpdown.Value;
+            XAxisRange = XAxisRange * 1000;
 
             
             //InitGraph();
@@ -59,8 +62,10 @@ namespace IboxTestTCP
         {
             RollingPointPairList dummy = new RollingPointPairList(2000);
             LineItem myCurve = myPane.AddCurve("",dummy, Color.Transparent, SymbolType.None);
+            
             myCurve.YAxisIndex = 0;
             myPane.Title.IsVisible = false;
+            
             myPane.XAxis.Title.IsVisible = false;
             myPane.YAxis.Scale.IsVisible = false;
             myPane.YAxis.Title.IsVisible = false;
@@ -68,12 +73,13 @@ namespace IboxTestTCP
             myPane.YAxis.MajorGrid.IsVisible = true;
             myPane.YAxis.MajorGrid.Color = Color.Gray;
             
-            myPane.YAxis.MinorGrid.IsVisible = true;
+            myPane.YAxis.MinorGrid.IsVisible = false;
             myPane.YAxis.MinorGrid.Color = Color.Gray;
 
             myPane.XAxis.MajorGrid.IsVisible = true;
             myPane.XAxis.MajorGrid.Color = Color.Gray;
-            myPane.XAxis.MinorGrid.IsVisible = true;
+            
+            myPane.XAxis.MinorGrid.IsVisible = false;
             myPane.XAxis.MinorGrid.Color = Color.Gray;
 
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45.0f);
@@ -210,23 +216,6 @@ namespace IboxTestTCP
             zedGraphControl1.AxisChange();
 
         }
-        
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (!GrUpdTimer1.Enabled)
-            {
-                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = true;
-                button1.Text = "Stop";
-                GrUpdTimer1.Enabled = true;
-                IboxTestTCP.Form1.ShTCPTimer.Enabled = true;
-            } else
-            {
-                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = false;
-                button1.Text = "Start";
-                GrUpdTimer1.Enabled = false;
-                IboxTestTCP.Form1.ShTCPTimer.Enabled = false;
-            }
-        }
 
         private void CloseBtn_Click(object sender, EventArgs e)
         {
@@ -264,13 +253,13 @@ namespace IboxTestTCP
 
         private void GrUpdTimer1_Tick(object sender, EventArgs e)
         {
-            if (IboxTestTCP.Form1.MaxTime < 100)
+            if (IboxTestTCP.Form1.MaxTime < XAxisRange)
             {
-                myPane.XAxis.Scale.Max = 100;
+                myPane.XAxis.Scale.Max = XAxisRange;
                 myPane.XAxis.Scale.Min = 0;
             } else
             {
-                myPane.XAxis.Scale.Min = IboxTestTCP.Form1.MaxTime - 100;
+                myPane.XAxis.Scale.Min = IboxTestTCP.Form1.MaxTime - XAxisRange;
                 myPane.XAxis.Scale.Max = IboxTestTCP.Form1.MaxTime;
             }
            
@@ -281,8 +270,32 @@ namespace IboxTestTCP
 
         private void StrtBtn_Click(object sender, EventArgs e)
         {
-            IboxTestTCP.Form1.counter = 0;
-            IboxTestTCP.Form1.MaxTime = 0;
+            if (!GrUpdTimer1.Enabled)
+            {
+                IboxTestTCP.Form1.counter = 0;
+                IboxTestTCP.Form1.MaxTime = 0;
+                for (int i = 0; i < 24; i++)
+                IboxTestTCP.Form1.Lines[i].Clear();
+                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = true;
+                StrtBtn.Text = "Stop";
+                GrUpdTimer1.Enabled = true;
+                IboxTestTCP.Form1.ShTCPTimer.Enabled = true;
+            }
+            else
+            {
+                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = false;
+                StrtBtn.Text = "Start";
+                GrUpdTimer1.Enabled = false;
+                IboxTestTCP.Form1.ShTCPTimer.Enabled = false;
+            }
+
+
+        }
+
+        private void XAxisUpdown_ValueChanged(object sender, EventArgs e)
+        {
+            XAxisRange = (Int32)XAxisUpdown.Value;
+            XAxisRange = XAxisRange * 1000;
         }
     }
 }

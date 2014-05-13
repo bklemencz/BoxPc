@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
 using System.IO;
+using System.IO.Ports;
 using ZedGraph;
 
 namespace IboxTestTCP
@@ -31,6 +32,7 @@ namespace IboxTestTCP
         internal static extern uint timeEndPeriod(uint period);
 
         public const int MAX_PAGES = 10;
+        public int HISTORY_SIZE = 2500;
         public int ConfPageCount =10;
 
         public struct VarRecord_t
@@ -75,29 +77,55 @@ namespace IboxTestTCP
         public static System.Windows.Forms.Timer ShTCPTimer = new System.Windows.Forms.Timer();
         public static ComboBox ShPgSelCombo = new ComboBox();
         public static int counter;
+        public static int BoxState;
         
       
         public Form1()
         {
 
             timeBeginPeriod(1);
+            
             //System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
+            
             InitializeComponent();
-            LoadDefault();
 
-            for (int i = 0; i < 24; i++ )
-            {
-                Lines[i] = new RollingPointPairList(200);
-            }
+            LoadDefaultPageSetupCSV();
+            InitDisplayComponents();
+            InitTimers();
+            LoadDefaultConfig();
+            
+      
 
-                VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
+        }
 
+        private void InitTimers()
+        {
+            VarupdateTimer.Interval = (Int32)VarUpdRateSel.Value;
             ShVarUpdTimer = VarupdateTimer;
+            ShGrUpdateTime = ShGrUpdateTime = (Int32)GrUpdRateSel.Value;
+            TCPReadTimer.Interval = 50;
             ShTCPTimer = TCPReadTimer;
+            
+        }
+
+        private void InitDisplayComponents()
+        {
             ShPgSelCombo = VarViewPgSelCombo;
-            ShGrUpdateTime = Int32.Parse(GraphUpdateMs.Text);
+
+            for (int i = 0; i < 24; i++)
+            {
+                Lines[i] = new RollingPointPairList(HISTORY_SIZE);
+            }
             
-            
+            foreach (string s in SerialPort.GetPortNames())
+            {
+                SerPortList.Items.Add(s);
+            }
+            SerPortList.SelectedIndex = 0;
+            SerPBaudList.SelectedIndex = 1;
+            EthCommGroup.Enabled = false;
+            SerComGroup.Enabled = true;
+            SerConnRadio.Select();
 
         }
 
@@ -198,7 +226,7 @@ namespace IboxTestTCP
             PageVarList.Update();
         }
 
-        private void LoadDefault ()
+        private void LoadDefaultPageSetupCSV ()
         {
                 int ActPage;
                 String InPutLine;
@@ -281,10 +309,12 @@ namespace IboxTestTCP
                     Pages[SelectedPage].Variables[Pages[SelectedPage].VarCount].Ratems = IboxCSVread[i].Ratems;
                     PageVarList.Items.Add(IboxCSVread[i].Name);
                     Pages[SelectedPage].VarCount++;
+                    IboxCSVImpList.SetItemCheckState(i, CheckState.Unchecked);
                 }
             }
             PageVarList.Invalidate();
             PageVarList.Update();
+            
         }
 
         private void SaveDefConfButt_Click(object sender, EventArgs e)
@@ -422,7 +452,7 @@ namespace IboxTestTCP
             }
             else
             {
-                VarupdateTimer.Interval = Int32.Parse(VarUpdateMs.Text);
+                
                 VarupdateTimer.Enabled = true;
                 TCPReadTimer.Enabled = true;
             }
@@ -432,12 +462,7 @@ namespace IboxTestTCP
         {
             Form2 NewForm = new Form2();
             NewForm.Show();
-        }
-
-        private void GraphUpdateMs_TextChanged(object sender, EventArgs e)
-        {
-            ShGrUpdateTime = Int32.Parse(GraphUpdateMs.Text);
-        }
+        }     
         
         private void TCPReadTimer_Tick(object sender, EventArgs e)
         {
@@ -453,16 +478,185 @@ namespace IboxTestTCP
          }
             for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
             { 
-                Lines[i].Add(counter, counter * 2*(i+1));
-                if (counter > MaxTime) MaxTime = counter;
+                Lines[i].Add(counter*50, counter * 2*(i+1));
+                if (counter*50 > MaxTime) MaxTime = counter*50;
             }
             counter++;
         }
 
-        private void TCPUpdMs_TextChanged(object sender, EventArgs e)
+        private void GrUpdRateSel_ValueChanged(object sender, EventArgs e)
         {
-            TCPReadTimer.Interval = Int32.Parse(TCPUpdMs.Text);
+            ShGrUpdateTime = (Int32) GrUpdRateSel.Value;
         }
+
+        private void VarUpdRateSel_ValueChanged(object sender, EventArgs e)
+        {
+            VarupdateTimer.Interval = (Int32)VarUpdRateSel.Value;
+        }
+
+        private void SerPortListUpdButton_Click(object sender, EventArgs e)
+        {
+            SerPortList.Items.Clear();
+            foreach (string s in SerialPort.GetPortNames())
+            {
+                SerPortList.Items.Add(s);
+            }
+            SerPortList.SelectedIndex = 0;
+        }
+
+        private void TabChange_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SaveDefConf();
+        }
+
+        private void SaveDefConf()
+        {
+            String OutPutLine;
+            FileStream inStr = new FileStream("DefaultSetup.csv", FileMode.Create);
+            var file = new StreamWriter(inStr, Encoding.ASCII);
+            
+            OutPutLine = "SerialConn," + SerConnRadio.Checked.ToString(); 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "EthConn," + EthConnRadio.Checked.ToString(); 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "EthIP," + EthIPTxtBox.Text; 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "EthPort," + EthPortTxtBox.Text; 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "Serport," + SerPortList.SelectedItem.ToString(); 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "SerBaud," + SerPBaudList.SelectedItem.ToString(); 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "VarUpd," + VarUpdRateSel.Value.ToString(); 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "GraphUpd," + GrUpdRateSel.Value.ToString(); 
+            file.WriteLine(OutPutLine);
+            OutPutLine = "PageSel," + VarViewPgSelCombo.SelectedItem.ToString();
+            file.WriteLine(OutPutLine);
+            file.Close();
+        }
+
+        private void LoadDefaultConfig()
+        {
+            String LastLine;
+            String[] LineItems;
+            FileStream inStr = new FileStream("DefaultSetup.csv", FileMode.Open);
+            var file = new StreamReader(inStr, Encoding.ASCII);
+            while (!file.EndOfStream)
+            {
+                LastLine = file.ReadLine();
+                LineItems = LastLine.Split(',');
+                switch(LineItems[0])
+                {
+                    case "SerialConn":
+                        if (LineItems[1] == "TRUE") SerConnRadio.Checked = true;
+                        break;
+                    case "EthConn":
+                        if (LineItems[1] == "TRUE") EthConnRadio.Checked = true;
+                        break;
+                    case "EthIP":
+                        EthIPTxtBox.Text = LineItems[1];
+                        break;
+                    case "EthPort":
+                        EthPortTxtBox.Text = LineItems[1];
+                        break;
+                    case "Serport":
+                        int Selindex = SerPortList.FindStringExact(LineItems[1]);
+                        if (Selindex >= 0) SerPortList.SelectedIndex = Selindex; 
+                        break;
+                    case "SerBaud":
+                        SerPBaudList.SelectedIndex = SerPBaudList.FindStringExact(LineItems[1]);
+                        break;
+                    case "VarUpd":
+                        VarUpdRateSel.Value = Int32.Parse(LineItems[1]);
+                        break;
+                    case "GraphUpd":
+                        GrUpdRateSel.Value = Int32.Parse(LineItems[1]);
+                        break;
+                    case "PageSel":
+                        VarViewPgSelCombo.SelectedIndex = VarViewPgSelCombo.FindStringExact(LineItems[1]);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            file.Close();
+        }
+
+        private void SerialConnect()
+        {
+            if (!serialPort1.IsOpen)
+            {
+                serialPort1.PortName = SerPortList.SelectedItem.ToString();
+                serialPort1.BaudRate = Int32.Parse(SerPBaudList.SelectedItem.ToString());
+                try
+                {
+                    serialPort1.Open();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Serial Port Open Error:\n" + ex.Message.ToString());
+
+                }
+            }
+            
+        }
+
+        private void SerialHandShake()
+        {
+            string LastLine;
+            string[] LineItems;
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.WriteLine("//VER");
+                /////// 
+                //Read First Line After Version Request
+                ///////
+                #region SerialVerReq  
+                try
+                {
+                    LastLine = serialPort1.ReadLine();
+                    LineItems = LastLine.Split("//".ToCharArray());
+                    if (LineItems.Length == 3)
+                    {
+                        if (LineItems[1] == "BKBOX")
+                        {
+                            BoxStatustoolStrip.Text = "Box Online. Ver:" + LineItems[2];
+                            BoxState = 2;
+                        } else
+                        {
+                            MessageBox.Show("Box not connected, or Version Not Supported!\nSERAIL PORT CLOSED!");
+                            serialPort1.Close();
+                            BoxState = 0;
+                            return;
+                        }
+                    } else
+                    {
+                        MessageBox.Show("Box not connected, or Wrong Port Number!\nSERAIL PORT CLOSED!");
+                        serialPort1.Close();
+                        BoxState = 0;
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message.ToString() + "\nBox Not Connected Or Wrong Port Number!\nSERAIL PORT CLOSED!");
+                    serialPort1.Close();
+                    BoxState = 0;
+                    return;
+
+                }
+            }
+            #endregion SerialVerReq
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            SerialConnect();
+            SerialHandShake();
+        }
+       
 
     }
 }
