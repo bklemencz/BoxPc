@@ -98,9 +98,7 @@ namespace IboxTestTCP
       
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
+
         private void InitTimers()
         {
             VarupdateTimer.Interval = (Int32)VarUpdRateSel.Value;
@@ -110,9 +108,7 @@ namespace IboxTestTCP
             ShTCPTimer = TCPReadTimer;
             
         }
-        /// <summary>
-        /// 
-        /// </summary>
+
         private void InitDisplayComponents()
         {
             ShPgSelCombo = VarViewPgSelCombo;
@@ -134,11 +130,7 @@ namespace IboxTestTCP
             SerConnRadio.Select();
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private void ImpIboxCSV_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -213,11 +205,7 @@ namespace IboxTestTCP
                 
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private void IboxCSVImpList_SelectedIndexChanged(object sender, EventArgs e)
         {
             IBoxImpAddText.Text = IboxCSVread[IboxCSVImpList.SelectedIndex].Address.ToString("X");
@@ -609,8 +597,8 @@ namespace IboxTestTCP
                 {
                     serialPort1.PortName = SerPortList.SelectedItem.ToString();
                     serialPort1.BaudRate = Int32.Parse(SerPBaudList.SelectedItem.ToString());
+                    serialPort1.Encoding = Encoding.ASCII;
                     serialPort1.NewLine = "\n";
-                    //label70.Text = serialPort1.BaudRate.ToString();
                     serialPort1.Open();
                 }
                 catch (Exception ex)
@@ -633,15 +621,16 @@ namespace IboxTestTCP
                 //Read First Line After Version Request
                 ////////////////////////////////////////
                 #region SerialVerReq  
-                serialPort1.WriteLine("/VER");
                 try
                 {
-                    
+                    serialPort1.WriteLine("/VER");
+                    serialPort1.WriteLine("/VER");
                     LastLine = serialPort1.ReadLine();
-                    if (LastLine.StartsWith("/"))
-                        LastLine.TrimStart('/');
+                    
+                    LastLine = LastLine.TrimStart('/');
+                    label70.Text = LastLine;
                     LineItems = LastLine.Split('/');
-                    if (LineItems.Length == 3)
+                    if (LineItems[2] != "")
                     {
                         if (LineItems[1] == "BKBOX")
                         {
@@ -649,14 +638,14 @@ namespace IboxTestTCP
                             BoxState = 2;
                         } else
                         {
-                            MessageBox.Show(LastLine + "Box not connected, or Version Not Supported!\nSERAIL PORT CLOSED!");
+                            MessageBox.Show("Box not connected, or Version Not Supported!\nSERAIL PORT CLOSED!");
                             serialPort1.Close();
                             BoxState = 0;
                             return;
                         }
                     } else
                     {
-                        MessageBox.Show(LastLine + "Box not connected, or Wrong Port Number!\nSERAIL PORT CLOSED!");
+                        MessageBox.Show("Box not connected, or Wrong Port Number!\nSERAIL PORT CLOSED!");
                         serialPort1.Close();
                         BoxState = 0;
                         return;
@@ -664,7 +653,7 @@ namespace IboxTestTCP
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message.ToString() + "\nTimeout!Box Not Connected Or Wrong Port Number!\nSERAIL PORT CLOSED!");
+                    MessageBox.Show(ex.Message.ToString() + "\nBox Not Connected Or Wrong Port Number!\nSERAIL PORT CLOSED!");
                     serialPort1.Close();
                     BoxState = 0;
                     return;
@@ -681,9 +670,13 @@ namespace IboxTestTCP
             {
                 try
                 {
-                    serialPort1.WriteLine("/PAGE/" + Pages[VarViewPgSelCombo.SelectedIndex].VarCount.ToString());
+                    LastLine = "/PAGE/" + Pages[VarViewPgSelCombo.SelectedIndex].VarCount.ToString();
+                    serialPort1.WriteLine(LastLine);
+                    serialPort1.WriteLine(LastLine);
+
+                    label70.Text = LastLine;
                     LastLine = serialPort1.ReadLine();
-                    if (LastLine == "/OK")
+                    if (LastLine.Contains("/OK"))
                     {
                         for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
                         {
@@ -693,9 +686,10 @@ namespace IboxTestTCP
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Mult.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Offset.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Ratems.ToString();
+                            label70.Text = i.ToString() + ": " + LastLine;
                             serialPort1.WriteLine(LastLine);
                             LastLine = serialPort1.ReadLine();
-                            if (LastLine != "/OK")
+                            if (!LastLine.Contains("/OK"))
                             {
                                 MessageBox.Show("Communication Protocol Error!\nSERAIL PORT CLOSED!");
                                 serialPort1.Close();
@@ -705,12 +699,13 @@ namespace IboxTestTCP
                             }
                         }
                         BoxState = 3;
+                        toolStripStatusLabel2.Text = "Conf OK";
                     }
                 }
                 catch (Exception Ex)
                 {
 
-                    MessageBox.Show("Communication Protocol Error!\nSERAIL PORT CLOSED!");
+                    MessageBox.Show(Ex.Message + "\nCommunication Protocol Error!\nSERAIL PORT CLOSED!");
                     serialPort1.Close();
                     BoxState = 0;
                     return;
@@ -749,6 +744,7 @@ namespace IboxTestTCP
         private void button5_Click(object sender, EventArgs e)
         {
             SerialConnect();
+            Thread.Sleep(200);
             SerialHandShake();
         }
 
@@ -773,7 +769,7 @@ namespace IboxTestTCP
                         for (int i=0;i<Pages[VarViewPgSelCombo.SelectedIndex].VarCount;i++)
                         {
                             
-                            Lines[i].Add(TimeRead, Int32.Parse(LastItems[i + 1]));
+                            Lines[i].Add(TimeRead, Double.Parse(LastItems[i + 1]));
                         }
                     }
                 }

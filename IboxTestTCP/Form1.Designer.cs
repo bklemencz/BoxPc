@@ -296,7 +296,7 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(-1, 22);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1260, 489);
@@ -336,9 +336,9 @@
             this.tabPage1.Controls.Add(this.label13);
             this.tabPage1.Controls.Add(this.VarViewPgSelCombo);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
             this.tabPage1.Size = new System.Drawing.Size(1252, 463);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Variable View";
@@ -346,8 +346,8 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(839, 8);
-            this.button5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button5.Location = new System.Drawing.Point(1047, 5);
+            this.button5.Margin = new System.Windows.Forms.Padding(2);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(56, 19);
             this.button5.TabIndex = 18;
@@ -2240,7 +2240,7 @@
             this.tabPage3.Controls.Add(this.IboxCSVImpList);
             this.tabPage3.Controls.Add(this.button1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(1252, 463);
             this.tabPage3.TabIndex = 2;
@@ -2250,7 +2250,7 @@
             // MoveDownVar
             // 
             this.MoveDownVar.Location = new System.Drawing.Point(223, 359);
-            this.MoveDownVar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MoveDownVar.Margin = new System.Windows.Forms.Padding(2);
             this.MoveDownVar.Name = "MoveDownVar";
             this.MoveDownVar.Size = new System.Drawing.Size(75, 25);
             this.MoveDownVar.TabIndex = 37;
@@ -2260,7 +2260,7 @@
             // MoveUpVar
             // 
             this.MoveUpVar.Location = new System.Drawing.Point(223, 330);
-            this.MoveUpVar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MoveUpVar.Margin = new System.Windows.Forms.Padding(2);
             this.MoveUpVar.Name = "MoveUpVar";
             this.MoveUpVar.Size = new System.Drawing.Size(75, 25);
             this.MoveUpVar.TabIndex = 36;
@@ -2270,7 +2270,7 @@
             // PageVarOffText
             // 
             this.PageVarOffText.Location = new System.Drawing.Point(520, 166);
-            this.PageVarOffText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PageVarOffText.Margin = new System.Windows.Forms.Padding(2);
             this.PageVarOffText.Name = "PageVarOffText";
             this.PageVarOffText.Size = new System.Drawing.Size(76, 20);
             this.PageVarOffText.TabIndex = 35;
@@ -2288,7 +2288,7 @@
             // PageVarMulText
             // 
             this.PageVarMulText.Location = new System.Drawing.Point(520, 129);
-            this.PageVarMulText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PageVarMulText.Margin = new System.Windows.Forms.Padding(2);
             this.PageVarMulText.Name = "PageVarMulText";
             this.PageVarMulText.Size = new System.Drawing.Size(76, 20);
             this.PageVarMulText.TabIndex = 33;
@@ -2306,7 +2306,7 @@
             // PageVarLenText
             // 
             this.PageVarLenText.Location = new System.Drawing.Point(520, 93);
-            this.PageVarLenText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PageVarLenText.Margin = new System.Windows.Forms.Padding(2);
             this.PageVarLenText.Name = "PageVarLenText";
             this.PageVarLenText.Size = new System.Drawing.Size(76, 20);
             this.PageVarLenText.TabIndex = 31;
@@ -2324,7 +2324,7 @@
             // PageVarAddText
             // 
             this.PageVarAddText.Location = new System.Drawing.Point(520, 56);
-            this.PageVarAddText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PageVarAddText.Margin = new System.Windows.Forms.Padding(2);
             this.PageVarAddText.Name = "PageVarAddText";
             this.PageVarAddText.Size = new System.Drawing.Size(76, 20);
             this.PageVarAddText.TabIndex = 29;
@@ -2342,7 +2342,7 @@
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(521, 315);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 25);
             this.button2.TabIndex = 26;
@@ -2352,7 +2352,7 @@
             // UpdAllButt
             // 
             this.UpdAllButt.Location = new System.Drawing.Point(521, 286);
-            this.UpdAllButt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.UpdAllButt.Margin = new System.Windows.Forms.Padding(2);
             this.UpdAllButt.Name = "UpdAllButt";
             this.UpdAllButt.Size = new System.Drawing.Size(75, 25);
             this.UpdAllButt.TabIndex = 25;
@@ -2362,7 +2362,7 @@
             // SaveToFile
             // 
             this.SaveToFile.Location = new System.Drawing.Point(520, 257);
-            this.SaveToFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SaveToFile.Margin = new System.Windows.Forms.Padding(2);
             this.SaveToFile.Name = "SaveToFile";
             this.SaveToFile.Size = new System.Drawing.Size(75, 25);
             this.SaveToFile.TabIndex = 24;
@@ -2372,7 +2372,7 @@
             // SaveDefConfButt
             // 
             this.SaveDefConfButt.Location = new System.Drawing.Point(520, 228);
-            this.SaveDefConfButt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SaveDefConfButt.Margin = new System.Windows.Forms.Padding(2);
             this.SaveDefConfButt.Name = "SaveDefConfButt";
             this.SaveDefConfButt.Size = new System.Drawing.Size(75, 25);
             this.SaveDefConfButt.TabIndex = 23;
@@ -2383,7 +2383,7 @@
             // RemVarFromPageButt
             // 
             this.RemVarFromPageButt.Location = new System.Drawing.Point(223, 301);
-            this.RemVarFromPageButt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.RemVarFromPageButt.Margin = new System.Windows.Forms.Padding(2);
             this.RemVarFromPageButt.Name = "RemVarFromPageButt";
             this.RemVarFromPageButt.Size = new System.Drawing.Size(75, 25);
             this.RemVarFromPageButt.TabIndex = 20;
@@ -2395,7 +2395,7 @@
             // 
             this.AddVarToPageButt.Enabled = false;
             this.AddVarToPageButt.Location = new System.Drawing.Point(223, 271);
-            this.AddVarToPageButt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AddVarToPageButt.Margin = new System.Windows.Forms.Padding(2);
             this.AddVarToPageButt.Name = "AddVarToPageButt";
             this.AddVarToPageButt.Size = new System.Drawing.Size(75, 25);
             this.AddVarToPageButt.TabIndex = 19;
@@ -2416,7 +2416,7 @@
             "500",
             "1000"});
             this.RateSelectCombo.Location = new System.Drawing.Point(520, 203);
-            this.RateSelectCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.RateSelectCombo.Margin = new System.Windows.Forms.Padding(2);
             this.RateSelectCombo.Name = "RateSelectCombo";
             this.RateSelectCombo.Size = new System.Drawing.Size(76, 21);
             this.RateSelectCombo.TabIndex = 18;
@@ -2436,7 +2436,7 @@
             // 
             this.PageVarList.FormattingEnabled = true;
             this.PageVarList.Location = new System.Drawing.Point(302, 41);
-            this.PageVarList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PageVarList.Margin = new System.Windows.Forms.Padding(2);
             this.PageVarList.Name = "PageVarList";
             this.PageVarList.Size = new System.Drawing.Size(214, 316);
             this.PageVarList.TabIndex = 16;
@@ -2465,7 +2465,7 @@
             "Spark",
             "Knock"});
             this.PageSelectCombo.Location = new System.Drawing.Point(370, 17);
-            this.PageSelectCombo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PageSelectCombo.Margin = new System.Windows.Forms.Padding(2);
             this.PageSelectCombo.Name = "PageSelectCombo";
             this.PageSelectCombo.Size = new System.Drawing.Size(146, 21);
             this.PageSelectCombo.TabIndex = 14;
@@ -2475,7 +2475,7 @@
             // 
             this.IboxImpIDText.Enabled = false;
             this.IboxImpIDText.Location = new System.Drawing.Point(223, 63);
-            this.IboxImpIDText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IboxImpIDText.Margin = new System.Windows.Forms.Padding(2);
             this.IboxImpIDText.Name = "IboxImpIDText";
             this.IboxImpIDText.Size = new System.Drawing.Size(76, 20);
             this.IboxImpIDText.TabIndex = 13;
@@ -2494,7 +2494,7 @@
             // 
             this.IboxImpSRText.Enabled = false;
             this.IboxImpSRText.Location = new System.Drawing.Point(223, 249);
-            this.IboxImpSRText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IboxImpSRText.Margin = new System.Windows.Forms.Padding(2);
             this.IboxImpSRText.Name = "IboxImpSRText";
             this.IboxImpSRText.Size = new System.Drawing.Size(76, 20);
             this.IboxImpSRText.TabIndex = 11;
@@ -2513,7 +2513,7 @@
             // 
             this.IboxImpOffText.Enabled = false;
             this.IboxImpOffText.Location = new System.Drawing.Point(223, 209);
-            this.IboxImpOffText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IboxImpOffText.Margin = new System.Windows.Forms.Padding(2);
             this.IboxImpOffText.Name = "IboxImpOffText";
             this.IboxImpOffText.Size = new System.Drawing.Size(76, 20);
             this.IboxImpOffText.TabIndex = 9;
@@ -2532,7 +2532,7 @@
             // 
             this.IboxImpMulText.Enabled = false;
             this.IboxImpMulText.Location = new System.Drawing.Point(223, 172);
-            this.IboxImpMulText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IboxImpMulText.Margin = new System.Windows.Forms.Padding(2);
             this.IboxImpMulText.Name = "IboxImpMulText";
             this.IboxImpMulText.Size = new System.Drawing.Size(76, 20);
             this.IboxImpMulText.TabIndex = 7;
@@ -2551,7 +2551,7 @@
             // 
             this.IboxImpLnText.Enabled = false;
             this.IboxImpLnText.Location = new System.Drawing.Point(223, 136);
-            this.IboxImpLnText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IboxImpLnText.Margin = new System.Windows.Forms.Padding(2);
             this.IboxImpLnText.Name = "IboxImpLnText";
             this.IboxImpLnText.Size = new System.Drawing.Size(76, 20);
             this.IboxImpLnText.TabIndex = 5;
@@ -2570,7 +2570,7 @@
             // 
             this.IBoxImpAddText.Enabled = false;
             this.IBoxImpAddText.Location = new System.Drawing.Point(223, 99);
-            this.IBoxImpAddText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IBoxImpAddText.Margin = new System.Windows.Forms.Padding(2);
             this.IBoxImpAddText.Name = "IBoxImpAddText";
             this.IBoxImpAddText.Size = new System.Drawing.Size(76, 20);
             this.IBoxImpAddText.TabIndex = 3;
@@ -2590,7 +2590,7 @@
             this.IboxCSVImpList.CheckOnClick = true;
             this.IboxCSVImpList.FormattingEnabled = true;
             this.IboxCSVImpList.Location = new System.Drawing.Point(7, 47);
-            this.IboxCSVImpList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IboxCSVImpList.Margin = new System.Windows.Forms.Padding(2);
             this.IboxCSVImpList.Name = "IboxCSVImpList";
             this.IboxCSVImpList.Size = new System.Drawing.Size(212, 394);
             this.IboxCSVImpList.TabIndex = 1;
@@ -2600,7 +2600,7 @@
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(7, 10);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(212, 27);
             this.button1.TabIndex = 0;
@@ -2616,7 +2616,7 @@
             this.tabPage4.Controls.Add(this.EthCommGroup);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(1252, 463);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Application Settings";
@@ -2638,7 +2638,7 @@
             // 
             this.EthConnRadio.AutoSize = true;
             this.EthConnRadio.Location = new System.Drawing.Point(5, 53);
-            this.EthConnRadio.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.EthConnRadio.Margin = new System.Windows.Forms.Padding(2);
             this.EthConnRadio.Name = "EthConnRadio";
             this.EthConnRadio.Size = new System.Drawing.Size(193, 24);
             this.EthConnRadio.TabIndex = 1;
@@ -2650,7 +2650,7 @@
             // 
             this.SerConnRadio.AutoSize = true;
             this.SerConnRadio.Location = new System.Drawing.Point(5, 24);
-            this.SerConnRadio.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SerConnRadio.Margin = new System.Windows.Forms.Padding(2);
             this.SerConnRadio.Name = "SerConnRadio";
             this.SerConnRadio.Size = new System.Drawing.Size(169, 24);
             this.SerConnRadio.TabIndex = 0;
@@ -2676,7 +2676,7 @@
             // SerPortListUpdButton
             // 
             this.SerPortListUpdButton.Location = new System.Drawing.Point(10, 90);
-            this.SerPortListUpdButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SerPortListUpdButton.Margin = new System.Windows.Forms.Padding(2);
             this.SerPortListUpdButton.Name = "SerPortListUpdButton";
             this.SerPortListUpdButton.Size = new System.Drawing.Size(222, 28);
             this.SerPortListUpdButton.TabIndex = 9;
@@ -2691,7 +2691,7 @@
             "57600",
             "115200"});
             this.SerPBaudList.Location = new System.Drawing.Point(112, 58);
-            this.SerPBaudList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SerPBaudList.Margin = new System.Windows.Forms.Padding(2);
             this.SerPBaudList.Name = "SerPBaudList";
             this.SerPBaudList.Size = new System.Drawing.Size(121, 28);
             this.SerPBaudList.TabIndex = 4;
@@ -2700,7 +2700,7 @@
             // 
             this.SerPortList.FormattingEnabled = true;
             this.SerPortList.Location = new System.Drawing.Point(112, 29);
-            this.SerPortList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SerPortList.Margin = new System.Windows.Forms.Padding(2);
             this.SerPortList.Name = "SerPortList";
             this.SerPortList.Size = new System.Drawing.Size(121, 28);
             this.SerPortList.TabIndex = 3;
@@ -2747,7 +2747,7 @@
             0,
             0});
             this.GrUpdRateSel.Location = new System.Drawing.Point(125, 59);
-            this.GrUpdRateSel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.GrUpdRateSel.Margin = new System.Windows.Forms.Padding(2);
             this.GrUpdRateSel.Maximum = new decimal(new int[] {
             2000,
             0,
@@ -2776,7 +2776,7 @@
             0,
             0});
             this.VarUpdRateSel.Location = new System.Drawing.Point(125, 30);
-            this.VarUpdRateSel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.VarUpdRateSel.Margin = new System.Windows.Forms.Padding(2);
             this.VarUpdRateSel.Maximum = new decimal(new int[] {
             2000,
             0,
@@ -2892,7 +2892,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1028, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1266, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -2923,7 +2923,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 515);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 10, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1028, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1266, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -2931,8 +2931,8 @@
             // 
             this.BoxStatustoolStrip.ForeColor = System.Drawing.Color.Red;
             this.BoxStatustoolStrip.Name = "BoxStatustoolStrip";
-            this.BoxStatustoolStrip.Size = new System.Drawing.Size(65, 17);
-            this.BoxStatustoolStrip.Text = "Box Offline";
+            this.BoxStatustoolStrip.Size = new System.Drawing.Size(77, 17);
+            this.BoxStatustoolStrip.Text = "Box Offline    ";
             // 
             // toolStripStatusLabel2
             // 
@@ -2962,7 +2962,11 @@
             // 
             // serialPort1
             // 
+            this.serialPort1.BaudRate = 115200;
+            this.serialPort1.ReadBufferSize = 1024;
             this.serialPort1.ReadTimeout = 2000;
+            this.serialPort1.ReceivedBytesThreshold = 1000;
+            this.serialPort1.WriteBufferSize = 1024;
             // 
             // SerialReadTimer
             // 
@@ -2972,12 +2976,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1028, 537);
+            this.ClientSize = new System.Drawing.Size(1266, 537);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "NewIbox v0.0.1";
             this.tabControl1.ResumeLayout(false);
@@ -3269,7 +3273,6 @@
         private System.Windows.Forms.RadioButton SerConnRadio;
         public System.Windows.Forms.NumericUpDown GrUpdRateSel;
         public System.Windows.Forms.NumericUpDown VarUpdRateSel;
-        private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.ComboBox SerPortList;
         private System.Windows.Forms.ComboBox SerPBaudList;
         private System.Windows.Forms.Button SerPortListUpdButton;
@@ -3278,6 +3281,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         public System.Windows.Forms.Timer SerialReadTimer;
+        public System.IO.Ports.SerialPort serialPort1;
     }
 }
 
