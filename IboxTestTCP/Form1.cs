@@ -98,7 +98,9 @@ namespace IboxTestTCP
       
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         private void InitTimers()
         {
             VarupdateTimer.Interval = (Int32)VarUpdRateSel.Value;
@@ -108,7 +110,9 @@ namespace IboxTestTCP
             ShTCPTimer = TCPReadTimer;
             
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         private void InitDisplayComponents()
         {
             ShPgSelCombo = VarViewPgSelCombo;
@@ -130,7 +134,11 @@ namespace IboxTestTCP
             SerConnRadio.Select();
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ImpIboxCSV_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -205,7 +213,11 @@ namespace IboxTestTCP
                 
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void IboxCSVImpList_SelectedIndexChanged(object sender, EventArgs e)
         {
             IBoxImpAddText.Text = IboxCSVread[IboxCSVImpList.SelectedIndex].Address.ToString("X");
@@ -597,6 +609,8 @@ namespace IboxTestTCP
                 {
                     serialPort1.PortName = SerPortList.SelectedItem.ToString();
                     serialPort1.BaudRate = Int32.Parse(SerPBaudList.SelectedItem.ToString());
+                    serialPort1.NewLine = "\n";
+                    //label70.Text = serialPort1.BaudRate.ToString();
                     serialPort1.Open();
                 }
                 catch (Exception ex)
@@ -619,10 +633,13 @@ namespace IboxTestTCP
                 //Read First Line After Version Request
                 ////////////////////////////////////////
                 #region SerialVerReq  
+                serialPort1.WriteLine("/VER");
                 try
                 {
-                    serialPort1.WriteLine("/VER");
+                    
                     LastLine = serialPort1.ReadLine();
+                    if (LastLine.StartsWith("/"))
+                        LastLine.TrimStart('/');
                     LineItems = LastLine.Split('/');
                     if (LineItems.Length == 3)
                     {
@@ -632,14 +649,14 @@ namespace IboxTestTCP
                             BoxState = 2;
                         } else
                         {
-                            MessageBox.Show("Box not connected, or Version Not Supported!\nSERAIL PORT CLOSED!");
+                            MessageBox.Show(LastLine + "Box not connected, or Version Not Supported!\nSERAIL PORT CLOSED!");
                             serialPort1.Close();
                             BoxState = 0;
                             return;
                         }
                     } else
                     {
-                        MessageBox.Show("Box not connected, or Wrong Port Number!\nSERAIL PORT CLOSED!");
+                        MessageBox.Show(LastLine + "Box not connected, or Wrong Port Number!\nSERAIL PORT CLOSED!");
                         serialPort1.Close();
                         BoxState = 0;
                         return;
@@ -647,7 +664,7 @@ namespace IboxTestTCP
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message.ToString() + "\nBox Not Connected Or Wrong Port Number!\nSERAIL PORT CLOSED!");
+                    MessageBox.Show(ex.Message.ToString() + "\nTimeout!Box Not Connected Or Wrong Port Number!\nSERAIL PORT CLOSED!");
                     serialPort1.Close();
                     BoxState = 0;
                     return;
@@ -670,7 +687,8 @@ namespace IboxTestTCP
                     {
                         for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
                         {
-                            LastLine = '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Address.ToString();
+                            LastLine = "/VAR";
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Address.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Length.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Mult.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Offset.ToString();
