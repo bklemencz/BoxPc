@@ -39,7 +39,7 @@
             this.listBox1.ItemHeight = 16;
             this.listBox1.Location = new System.Drawing.Point(1, -2);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(558, 196);
+            this.listBox1.Size = new System.Drawing.Size(1148, 196);
             this.listBox1.TabIndex = 0;
             // 
             // ClearLogButt
@@ -54,7 +54,7 @@
             // 
             // SaveLogButt
             // 
-            this.SaveLogButt.Location = new System.Drawing.Point(339, 197);
+            this.SaveLogButt.Location = new System.Drawing.Point(931, 197);
             this.SaveLogButt.Name = "SaveLogButt";
             this.SaveLogButt.Size = new System.Drawing.Size(206, 30);
             this.SaveLogButt.TabIndex = 2;
@@ -65,7 +65,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(557, 230);
+            this.ClientSize = new System.Drawing.Size(1149, 230);
             this.ControlBox = false;
             this.Controls.Add(this.SaveLogButt);
             this.Controls.Add(this.ClearLogButt);

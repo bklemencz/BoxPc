@@ -60,6 +60,8 @@ namespace IboxTestTCP
         public VarRecord_t[] TempVarRec = new VarRecord_t[50];
         public int ImpVariableCount,SelectedPage;
         public string LastSerialLine;
+        public FileStream LogFileStream;
+        public StreamWriter LogFileWriter;
 
         public static Stopwatch Stopper1 = new Stopwatch();
         public StatusForm St_Form = new StatusForm();
@@ -130,7 +132,6 @@ namespace IboxTestTCP
             SerPBaudList.SelectedIndex = 1;
             EthCommGroup.Enabled = false;
             SerComGroup.Enabled = true;
-            SerConnRadio.Select();
 
         }
 
@@ -453,7 +454,7 @@ namespace IboxTestTCP
 
         }
 
-        private void ConnectButt_Click(object sender, EventArgs e)
+        private void StreamButt_Click(object sender, EventArgs e)
         {
             if (VarupdateTimer.Enabled)
             {
@@ -464,6 +465,7 @@ namespace IboxTestTCP
                     toolStripStreamingStatus.Text = "Streaming: Off";
                     VarupdateTimer.Enabled = false;
                     SerialReadTimer.Enabled = false;
+                    ConnButt.Enabled = true;
                 }
             }
             else
@@ -475,6 +477,7 @@ namespace IboxTestTCP
                     toolStripStreamingStatus.Text = "Streaming: On";
                     VarupdateTimer.Enabled = true;
                     SerialReadTimer.Enabled = true;
+                    ConnButt.Enabled = false;
                 }
             }
         }
@@ -528,6 +531,7 @@ namespace IboxTestTCP
         private void TabChange_SelectedIndexChanged(object sender, EventArgs e)
         {
             SaveDefConf();
+            AddStatusMessage("Configuration Autosave done!");
         }
 
         private void SaveDefConf()
@@ -536,9 +540,9 @@ namespace IboxTestTCP
             FileStream inStr = new FileStream("DefaultSetup.csv", FileMode.Create);
             var file = new StreamWriter(inStr, Encoding.ASCII);
             
-            OutPutLine = "SerialConn," + SerConnRadio.Checked.ToString(); 
+            OutPutLine = "SerialConn," + SerConnCheck.Checked.ToString(); 
             file.WriteLine(OutPutLine);
-            OutPutLine = "EthConn," + EthConnRadio.Checked.ToString(); 
+            OutPutLine = "EthConn," + EthConnCheck.Checked.ToString(); 
             file.WriteLine(OutPutLine);
             OutPutLine = "EthIP," + EthIPTxtBox.Text; 
             file.WriteLine(OutPutLine);
@@ -557,6 +561,16 @@ namespace IboxTestTCP
             file.WriteLine(OutPutLine);
             OutPutLine = "PageSel," + VarViewPgSelCombo.SelectedItem.ToString();
             file.WriteLine(OutPutLine);
+            OutPutLine = "LogFileEnable," + LogFileEnable.Checked.ToString();
+            file.WriteLine(OutPutLine);
+            OutPutLine = "LogFileAutoName," + LogFileAutoName.Checked.ToString();
+            file.WriteLine(OutPutLine);
+            OutPutLine = "LogFileIncVIN," + LogFileIncVIN.Checked.ToString();
+            file.WriteLine(OutPutLine);
+            OutPutLine = "LogFileBaseName," + LogFileBaseName.Text;
+            file.WriteLine(OutPutLine);
+            OutPutLine = "LogFileFolder," + LogFileFolder.Text;
+            file.WriteLine(OutPutLine);
             file.Close();
         }
 
@@ -573,10 +587,12 @@ namespace IboxTestTCP
                 switch(LineItems[0])
                 {
                     case "SerialConn":
-                        if (LineItems[1] == "TRUE") SerConnRadio.Checked = true;
+                        if (LineItems[1] == "True") SerConnCheck.Checked = true;
+                        SerComGroup.Enabled = true;
                         break;
                     case "EthConn":
-                        if (LineItems[1] == "TRUE") EthConnRadio.Checked = true;
+                        if (LineItems[1] == "True") EthConnCheck.Checked = true;
+                        EthCommGroup.Enabled = true;
                         break;
                     case "EthIP":
                         EthIPTxtBox.Text = LineItems[1];
@@ -600,6 +616,21 @@ namespace IboxTestTCP
                     case "PageSel":
                         VarViewPgSelCombo.SelectedIndex = VarViewPgSelCombo.FindStringExact(LineItems[1]);
                         break;
+                    case "LogFileEnable":
+                        if (LineItems[1] == "True") LogFileEnable.Checked = true;
+                        break;
+                    case "LogFileAutoName":
+                        if (LineItems[1] == "True") LogFileAutoName.Checked = true;
+                        break;
+                    case "LogFileIncVIN":
+                        if (LineItems[1] == "True") LogFileIncVIN.Checked = true;
+                        break;
+                    case "LogFileBaseName":
+                        LogFileBaseName.Text = LineItems[1];
+                        break;
+                    case "LogFileFolder":
+                        LogFileFolder.Text = LineItems[1];
+                        break;
                     default:
                         break;
                 }
@@ -615,7 +646,9 @@ namespace IboxTestTCP
                 try
                 {
                     serialPort1.PortName = SerPortList.SelectedItem.ToString();
+                    AddStatusMessage("Serial Port: " + serialPort1.PortName);
                     serialPort1.BaudRate = Int32.Parse(SerPBaudList.SelectedItem.ToString());
+                    AddStatusMessage("Serial Baud: " + serialPort1.BaudRate.ToString());
                     serialPort1.Encoding = Encoding.ASCII;
                     serialPort1.NewLine = "\n";
                     serialPort1.Open();
@@ -658,7 +691,7 @@ namespace IboxTestTCP
             
         }
 
-        private void SerialHandShake()
+        private bool SerialHandShake()
         {
             string LastLine;
             string[] LineItems;
@@ -673,17 +706,25 @@ namespace IboxTestTCP
                 {
                     serialPort1.DiscardOutBuffer();
                     serialPort1.DiscardInBuffer();
-                    serialPort1.WriteLine("/VER");
-                    serialPort1.WriteLine("/VER");
+                    string OutPutLine = "/VER";
+                    serialPort1.WriteLine(OutPutLine);
+                    serialPort1.ReadLine();
+                    serialPort1.WriteLine(OutPutLine);
+                    //AddStatusMessage("Sent: " + OutPutLine);
                     LastLine = serialPort1.ReadLine();
-                    
+                    //AddStatusMessage("Last: " + LastLine);
+                    if (LastLine.StartsWith("/ERROR"))
+                    {
+                        AddStatusMessage("Serial Error: " + LastLine);
+                        return false;
+                    }
                     LastLine = LastLine.TrimStart('/');
                     LineItems = LastLine.Split('/');
                     if (LineItems[2] != "")
                     {
                         if (LineItems[1] == "BKBOX")
                         {
-
+                            AddStatusMessage("BOX ID OK! Downloading Page Config...");
                             BoxStatustoolStrip.ForeColor = Color.Green;
                             BoxStatustoolStrip.Text = "Box Online. " + LineItems[2].Replace("\r","").Replace("\n","");
                             BoxState = 2;
@@ -692,23 +733,23 @@ namespace IboxTestTCP
                             MessageBox.Show("Box not connected, or Version Not Supported!\nSERAIL PORT CLOSED!");
                             serialPort1.Close();
                             BoxState = 0;
-                            return;
+                            return false;
                         }
                     } else
                     {
                         MessageBox.Show("Box not connected, or Wrong Port Number!\nSERAIL PORT CLOSED!");
                         serialPort1.Close();
                         BoxState = 0;
-                        return;
+                        return false;
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message.ToString() + "\nBox Not Connected Or Wrong Port Number!\nSERAIL PORT CLOSED!");
-                    IboxTestTCP.StatusForm.StBox.Items.Add(DateTime.Now.ToString("h:mm:ss tt") + " Box Not Connected Or Wrong Port Number!");
+                    AddStatusMessage("Box Not Connected Or Wrong Port Number!");
                     serialPort1.Close();
                     BoxState = 0;
-                    return;
+                    return false;
 
                 }
             }
@@ -751,13 +792,15 @@ namespace IboxTestTCP
                                 serialPort1.Close();
                                 i = Pages[VarViewPgSelCombo.SelectedIndex].VarCount;
                                 BoxState = 0;
-                                return;
+                                return false;
                             }
                         }
                         BoxState = 3;
                         toolStripStatusLabel2.ForeColor = Color.Green;
                         toolStripStatusLabel2.Text = "Conf OK";
                         PurgeSerial();
+                        AddStatusMessage("Page Configuration Successfully downloaded to the BOX! New State: 3");
+                        return false;
                     }
                 }
                 catch (Exception Ex)
@@ -766,7 +809,7 @@ namespace IboxTestTCP
                     MessageBox.Show(Ex.Message + "\nCommunication Protocol Error!\nSERAIL PORT CLOSED!");
                     serialPort1.Close();
                     BoxState = 0;
-                    return;
+                    return false;
                 }
                 #endregion SerialSendPageInfo
 
@@ -774,7 +817,9 @@ namespace IboxTestTCP
             if (!serialPort1.IsOpen)
             {
                 MessageBox.Show("Serial Port Not Open, Connect first!");
+                return false;
             }
+            return true;
        }
 
         private void SerialErrorParse(string LastLine)
@@ -795,7 +840,7 @@ namespace IboxTestTCP
                     {
                         PurgeSerial();
                         BoxState = 4;
-                        IboxTestTCP.StatusForm.StBox.Items.Add("Serial Streaming started! New Box State: " + BoxState.ToString());
+                        AddStatusMessage("Serial Streaming started! New Box State: " + BoxState.ToString());
                         return true;
                     }
                 }
@@ -814,6 +859,13 @@ namespace IboxTestTCP
             return false;
         }
 
+        private void AddStatusMessage(string message)
+        {
+            IboxTestTCP.StatusForm.StBox.Items.Add(DateTime.Now.ToString("yyMMdd h:mm:ss") + "->" + message);
+            IboxTestTCP.StatusForm.StBox.SelectedIndex = IboxTestTCP.StatusForm.StBox.Items.Count - 1;
+            IboxTestTCP.StatusForm.StBox.SelectedIndex = -1;
+        }
+
         private bool StopSerialStream()
         {
             string LastLine;
@@ -821,22 +873,25 @@ namespace IboxTestTCP
             {
                 try
                 {
+                    PurgeSerial();
                     serialPort1.WriteLine("/DISCONNECT");
+                    //AddStatusMessage("Sent: /Disconnect");
                     LastLine = serialPort1.ReadLine().Replace("\r", "").Replace("\n", "");
+                   // AddStatusMessage("Rec: " + LastLine);
                     if (LastLine == "/OK")
                     {
                         PurgeSerial();
                         BoxState = 3;
-                        IboxTestTCP.StatusForm.StBox.Items.Add("Serial Streaming stopped! New Box State: " + BoxState.ToString());
+                        AddStatusMessage("Serial Streaming stopped! New Box State: " + BoxState.ToString());
                         
                         return true;
                     }
                 }
-                catch (Exception Ex)
+                catch (Exception)
                 {
                     MessageBox.Show("Communication Protocol Error!\nSERAIL PORT CLOSED!");
-                    serialPort1.Close();
-                    BoxState = 0;
+                    //serialPort1.Close();
+                    //BoxState = 0;
                     return false;
                 }
             }
@@ -848,26 +903,57 @@ namespace IboxTestTCP
             return false;
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void ConnButt_Click(object sender, EventArgs e)
         {
+            
             SerialConnect();
-            Thread.Sleep(200);
             if (serialPort1.IsOpen)
             {
+               // AddStatusMessage("Connecting on serial bus:" + serialPort1.PortName);
                 SerialHandShake();
-                button5.Text = "Disconnect";
+                ConnButt.Text = "Disconnect";
+                if (LogFileEnable.Checked) OpenLogFile(); 
+                StatusReqButt.Enabled = true;
+                BoxUpdateButt.Enabled = true;
+                StreamButt.Enabled = true;
             }
             if (!serialPort1.IsOpen)
             {
-                button5.Text = "Connect Test";
+                AddStatusMessage("Disconnecting on serial bus:" + serialPort1.PortName);
+                if (LogFileEnable.Checked)
+                {
+                    LogFileWriter.Flush();
+                    LogFileWriter.Close();
+                    AddStatusMessage("Log File:  " + LogFileStream.Name + " Closed!");
+                    LogFileStream.Close();
+                    StreamButt.Enabled = false;
+                }
+                ConnButt.Text = "Connect Test";
+                SerialReadTimer.Enabled = false;
+                BoxUpdateButt.Enabled = false;
+                StatusReqButt.Enabled = false;
             }
+        }
+
+        private void OpenLogFile()
+        {
+            string LogFileName = LogFileFolder.Text + "\\" + DateTime.Now.ToString("yyMMdd_hmmss_") + LogFileBaseName.Text + "_" + Pages[VarViewPgSelCombo.SelectedIndex].Name + ".csv";
+            LogFileStream = new FileStream(LogFileName, FileMode.Create);
+            LogFileWriter = new StreamWriter(LogFileStream, Encoding.ASCII);
+            AddStatusMessage("Log file Created: " + LogFileName);
+            string OutPutline = "TimeStamp";
+            for (int i=0; i<Pages[VarViewPgSelCombo.SelectedIndex].VarCount;i++)
+            {
+                OutPutline += "," + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Name;
+            }
+            LogFileWriter.WriteLine(OutPutline);
         }
 
         private void SerialReadTimer_Tick(object sender, EventArgs e)
         {
             char LastSerialChar;
             string[] LastItems;
-            int TimeRead;
+            int TimeRead = 0;
             if (serialPort1.IsOpen)
             {
                 while (serialPort1.BytesToRead > 0)
@@ -879,29 +965,50 @@ namespace IboxTestTCP
                     }
                     else
                     {
-                        LastItems = LastSerialLine.Replace("\n", "").Replace("\r", "").Split(',');
-                        TimeRead = Int32.Parse(LastItems[0]);
-                        MaxTime = TimeRead;
-                        for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                        if (LastSerialLine.StartsWith("/ERROR"))
                         {
-
-                            if (LastItems[i + 1] != "")
-                            {
-                                Lines[i].Add(TimeRead, Double.Parse(LastItems[i + 1]));
-                                LastValues[i] = Double.Parse(LastItems[i + 1]);
-                            }
-                            else
-                            {
-                                Lines[i].Add(TimeRead, LastValues[i]);
-                            }
+                            AddStatusMessage(LastSerialLine);
+                            LastSerialLine = "";
                         }
-                        LastSerialLine = "";
-                    }
-                }
-            }
-            else
+                        else
+                        {
+                            LastItems = LastSerialLine.Replace("\n", "").Replace("\r", "").Split(',');
+                            if (LastItems[0] == "") LastItems[0] = MaxTime.ToString();                  //If no timestamp use the last one
+                                TimeRead = Int32.Parse(LastItems[0]);
+                                MaxTime = TimeRead;
+                            
+                            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                            {
+
+                                if (LastItems[i + 1] != "")
+                                {
+                                    Lines[i].Add(TimeRead, Double.Parse(LastItems[i + 1]));
+                                    LastValues[i] = Double.Parse(LastItems[i + 1]);
+                                }
+                                else
+                                {
+                                    Lines[i].Add(TimeRead, LastValues[i]);
+                                }
+                            }                                                       // End of variable read
+                            if (LogFileEnable.Checked)                              // If logging enabled write values to the file
+                            {
+                                string WriteLn = "";
+                                WriteLn += MaxTime.ToString();
+                                for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                                {
+                                    WriteLn += "," + LastValues[i].ToString(string.Format("{0:0.0000}"));
+                                }
+                                LogFileWriter.WriteLine(WriteLn);
+                            }                                                      // End of file writer
+                            LastSerialLine = "";
+                        }                                                          // End of line parse
+                    }                                                              // End of serial buffer read
+                }                                                                  // End of serial buffer check 
+            }                                                                      // End of serial open condition
+            else                                                                   // If serial port is not open, shouldnt happen here
             {
                 MessageBox.Show("Serial Port not open!");
+                AddStatusMessage("Serial Port Not Open. Internal software error, please restart!");
             }
         }
         
@@ -939,9 +1046,35 @@ namespace IboxTestTCP
 
         private void BoxUpdateButt_Click(object sender, EventArgs e)
         {
-            SerialHandShake();
-            IboxTestTCP.StatusForm.StBox.Items.Add("BOX Updated to current page");
-            PurgeSerial();
+            if (serialPort1.IsOpen)
+            {
+                SerialHandShake();
+                IboxTestTCP.StatusForm.StBox.Items.Add("BOX Updated to current page");
+                PurgeSerial();
+            }
+        }
+
+        private void SerConnCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SerConnCheck.Checked)
+                SerComGroup.Enabled = true;
+            else
+                SerComGroup.Enabled = false;
+        }
+
+        private void EthConnCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            if (EthConnCheck.Checked)
+                EthCommGroup.Enabled = true;
+            else
+                EthCommGroup.Enabled = false;
+        }
+
+        private void LogFileSelectFolderButt_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            DialogResult result = fbd.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK) LogFileFolder.Text = fbd.SelectedPath; 
         }
        
 
