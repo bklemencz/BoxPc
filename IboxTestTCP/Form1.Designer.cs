@@ -32,10 +32,10 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.BoxUpdateButt = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.StatusReqButt = new System.Windows.Forms.Button();
+            this.ConnButt = new System.Windows.Forms.Button();
             this.label70 = new System.Windows.Forms.Label();
-            this.button4 = new System.Windows.Forms.Button();
+            this.ShowGraphButt = new System.Windows.Forms.Button();
             this.StreamButt = new System.Windows.Forms.Button();
             this.Var24Gr = new System.Windows.Forms.GroupBox();
             this.textBox61 = new System.Windows.Forms.TextBox();
@@ -220,9 +220,17 @@
             this.IboxCSVImpList = new System.Windows.Forms.CheckedListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.LogFileSetupGroup = new System.Windows.Forms.GroupBox();
+            this.LogFileFolder = new System.Windows.Forms.TextBox();
+            this.LogFileSelectFolderButt = new System.Windows.Forms.Button();
+            this.LogFileBaseName = new System.Windows.Forms.TextBox();
+            this.LogFileSetupLabel = new System.Windows.Forms.Label();
+            this.LogFileEnable = new System.Windows.Forms.CheckBox();
+            this.LogFileIncVIN = new System.Windows.Forms.CheckBox();
+            this.LogFileAutoName = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.EthConnRadio = new System.Windows.Forms.RadioButton();
-            this.SerConnRadio = new System.Windows.Forms.RadioButton();
+            this.EthConnCheck = new System.Windows.Forms.CheckBox();
+            this.SerConnCheck = new System.Windows.Forms.CheckBox();
             this.SerComGroup = new System.Windows.Forms.GroupBox();
             this.SerPortListUpdButton = new System.Windows.Forms.Button();
             this.SerPBaudList = new System.Windows.Forms.ComboBox();
@@ -254,6 +262,7 @@
             this.TCPReadTimer = new System.Windows.Forms.Timer(this.components);
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.SerialReadTimer = new System.Windows.Forms.Timer(this.components);
+            this.TCPConnButt = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.Var24Gr.SuspendLayout();
@@ -282,6 +291,7 @@
             this.Var1Gr.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.LogFileSetupGroup.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.SerComGroup.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -307,11 +317,12 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.TCPConnButt);
             this.tabPage1.Controls.Add(this.BoxUpdateButt);
-            this.tabPage1.Controls.Add(this.button6);
-            this.tabPage1.Controls.Add(this.button5);
+            this.tabPage1.Controls.Add(this.StatusReqButt);
+            this.tabPage1.Controls.Add(this.ConnButt);
             this.tabPage1.Controls.Add(this.label70);
-            this.tabPage1.Controls.Add(this.button4);
+            this.tabPage1.Controls.Add(this.ShowGraphButt);
             this.tabPage1.Controls.Add(this.StreamButt);
             this.tabPage1.Controls.Add(this.Var24Gr);
             this.tabPage1.Controls.Add(this.Var20Gr);
@@ -350,6 +361,7 @@
             // 
             // BoxUpdateButt
             // 
+            this.BoxUpdateButt.Enabled = false;
             this.BoxUpdateButt.Location = new System.Drawing.Point(1079, 10);
             this.BoxUpdateButt.Name = "BoxUpdateButt";
             this.BoxUpdateButt.Size = new System.Drawing.Size(120, 28);
@@ -358,26 +370,27 @@
             this.BoxUpdateButt.UseVisualStyleBackColor = true;
             this.BoxUpdateButt.Click += new System.EventHandler(this.BoxUpdateButt_Click);
             // 
-            // button6
+            // StatusReqButt
             // 
-            this.button6.Location = new System.Drawing.Point(953, 10);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(120, 28);
-            this.button6.TabIndex = 19;
-            this.button6.Text = "Req Status";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.PageStatusReq_Click);
+            this.StatusReqButt.Enabled = false;
+            this.StatusReqButt.Location = new System.Drawing.Point(953, 10);
+            this.StatusReqButt.Name = "StatusReqButt";
+            this.StatusReqButt.Size = new System.Drawing.Size(120, 28);
+            this.StatusReqButt.TabIndex = 19;
+            this.StatusReqButt.Text = "Req Status";
+            this.StatusReqButt.UseVisualStyleBackColor = true;
+            this.StatusReqButt.Click += new System.EventHandler(this.PageStatusReq_Click);
             // 
-            // button5
+            // ConnButt
             // 
-            this.button5.Location = new System.Drawing.Point(836, 10);
-            this.button5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(111, 28);
-            this.button5.TabIndex = 18;
-            this.button5.Text = "Connect Test";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.ConnButt.Location = new System.Drawing.Point(836, 10);
+            this.ConnButt.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ConnButt.Name = "ConnButt";
+            this.ConnButt.Size = new System.Drawing.Size(111, 28);
+            this.ConnButt.TabIndex = 18;
+            this.ConnButt.Text = "Connect Test";
+            this.ConnButt.UseVisualStyleBackColor = true;
+            this.ConnButt.Click += new System.EventHandler(this.ConnButt_Click);
             // 
             // label70
             // 
@@ -389,19 +402,20 @@
             this.label70.TabIndex = 17;
             this.label70.Text = "label70";
             // 
-            // button4
+            // ShowGraphButt
             // 
-            this.button4.Location = new System.Drawing.Point(561, 10);
-            this.button4.Margin = new System.Windows.Forms.Padding(4);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(267, 28);
-            this.button4.TabIndex = 16;
-            this.button4.Text = "Show Graph";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.ShowGraph_Click);
+            this.ShowGraphButt.Location = new System.Drawing.Point(561, 10);
+            this.ShowGraphButt.Margin = new System.Windows.Forms.Padding(4);
+            this.ShowGraphButt.Name = "ShowGraphButt";
+            this.ShowGraphButt.Size = new System.Drawing.Size(267, 28);
+            this.ShowGraphButt.TabIndex = 16;
+            this.ShowGraphButt.Text = "Show Graph";
+            this.ShowGraphButt.UseVisualStyleBackColor = true;
+            this.ShowGraphButt.Click += new System.EventHandler(this.ShowGraph_Click);
             // 
             // StreamButt
             // 
+            this.StreamButt.Enabled = false;
             this.StreamButt.Location = new System.Drawing.Point(287, 10);
             this.StreamButt.Margin = new System.Windows.Forms.Padding(4);
             this.StreamButt.Name = "StreamButt";
@@ -409,7 +423,7 @@
             this.StreamButt.TabIndex = 15;
             this.StreamButt.Text = "Start Stream";
             this.StreamButt.UseVisualStyleBackColor = true;
-            this.StreamButt.Click += new System.EventHandler(this.ConnectButt_Click);
+            this.StreamButt.Click += new System.EventHandler(this.StreamButt_Click);
             // 
             // Var24Gr
             // 
@@ -2796,6 +2810,7 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.LogFileSetupGroup);
             this.tabPage4.Controls.Add(this.groupBox4);
             this.tabPage4.Controls.Add(this.SerComGroup);
             this.tabPage4.Controls.Add(this.groupBox2);
@@ -2809,10 +2824,92 @@
             this.tabPage4.Text = "Application Settings";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // LogFileSetupGroup
+            // 
+            this.LogFileSetupGroup.Controls.Add(this.LogFileFolder);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileSelectFolderButt);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileBaseName);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileSetupLabel);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileEnable);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileIncVIN);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileAutoName);
+            this.LogFileSetupGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.LogFileSetupGroup.Location = new System.Drawing.Point(335, 8);
+            this.LogFileSetupGroup.Margin = new System.Windows.Forms.Padding(4);
+            this.LogFileSetupGroup.Name = "LogFileSetupGroup";
+            this.LogFileSetupGroup.Padding = new System.Windows.Forms.Padding(4);
+            this.LogFileSetupGroup.Size = new System.Drawing.Size(316, 221);
+            this.LogFileSetupGroup.TabIndex = 11;
+            this.LogFileSetupGroup.TabStop = false;
+            this.LogFileSetupGroup.Text = "Logging To File Setup";
+            // 
+            // LogFileFolder
+            // 
+            this.LogFileFolder.Location = new System.Drawing.Point(7, 144);
+            this.LogFileFolder.Name = "LogFileFolder";
+            this.LogFileFolder.Size = new System.Drawing.Size(302, 30);
+            this.LogFileFolder.TabIndex = 15;
+            // 
+            // LogFileSelectFolderButt
+            // 
+            this.LogFileSelectFolderButt.Location = new System.Drawing.Point(7, 177);
+            this.LogFileSelectFolderButt.Name = "LogFileSelectFolderButt";
+            this.LogFileSelectFolderButt.Size = new System.Drawing.Size(302, 34);
+            this.LogFileSelectFolderButt.TabIndex = 14;
+            this.LogFileSelectFolderButt.Text = "Select Folder";
+            this.LogFileSelectFolderButt.UseVisualStyleBackColor = true;
+            this.LogFileSelectFolderButt.Click += new System.EventHandler(this.LogFileSelectFolderButt_Click);
+            // 
+            // LogFileBaseName
+            // 
+            this.LogFileBaseName.Location = new System.Drawing.Point(143, 109);
+            this.LogFileBaseName.Name = "LogFileBaseName";
+            this.LogFileBaseName.Size = new System.Drawing.Size(166, 30);
+            this.LogFileBaseName.TabIndex = 13;
+            // 
+            // LogFileSetupLabel
+            // 
+            this.LogFileSetupLabel.AutoSize = true;
+            this.LogFileSetupLabel.Location = new System.Drawing.Point(7, 112);
+            this.LogFileSetupLabel.Name = "LogFileSetupLabel";
+            this.LogFileSetupLabel.Size = new System.Drawing.Size(130, 25);
+            this.LogFileSetupLabel.TabIndex = 12;
+            this.LogFileSetupLabel.Text = "Base Name:";
+            // 
+            // LogFileEnable
+            // 
+            this.LogFileEnable.AutoSize = true;
+            this.LogFileEnable.Location = new System.Drawing.Point(7, 28);
+            this.LogFileEnable.Name = "LogFileEnable";
+            this.LogFileEnable.Size = new System.Drawing.Size(249, 29);
+            this.LogFileEnable.TabIndex = 11;
+            this.LogFileEnable.Text = "Enable Logging to File";
+            this.LogFileEnable.UseVisualStyleBackColor = true;
+            // 
+            // LogFileIncVIN
+            // 
+            this.LogFileIncVIN.AutoSize = true;
+            this.LogFileIncVIN.Location = new System.Drawing.Point(7, 80);
+            this.LogFileIncVIN.Name = "LogFileIncVIN";
+            this.LogFileIncVIN.Size = new System.Drawing.Size(231, 29);
+            this.LogFileIncVIN.TabIndex = 10;
+            this.LogFileIncVIN.Text = "Include VIN in Name";
+            this.LogFileIncVIN.UseVisualStyleBackColor = true;
+            // 
+            // LogFileAutoName
+            // 
+            this.LogFileAutoName.AutoSize = true;
+            this.LogFileAutoName.Location = new System.Drawing.Point(7, 54);
+            this.LogFileAutoName.Name = "LogFileAutoName";
+            this.LogFileAutoName.Size = new System.Drawing.Size(182, 29);
+            this.LogFileAutoName.TabIndex = 9;
+            this.LogFileAutoName.Text = "Auto File Name";
+            this.LogFileAutoName.UseVisualStyleBackColor = true;
+            // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.EthConnRadio);
-            this.groupBox4.Controls.Add(this.SerConnRadio);
+            this.groupBox4.Controls.Add(this.EthConnCheck);
+            this.groupBox4.Controls.Add(this.SerConnCheck);
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.groupBox4.Location = new System.Drawing.Point(11, 7);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
@@ -2823,29 +2920,27 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Communication Setup";
             // 
-            // EthConnRadio
+            // EthConnCheck
             // 
-            this.EthConnRadio.AutoSize = true;
-            this.EthConnRadio.Location = new System.Drawing.Point(7, 65);
-            this.EthConnRadio.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.EthConnRadio.Name = "EthConnRadio";
-            this.EthConnRadio.Size = new System.Drawing.Size(230, 29);
-            this.EthConnRadio.TabIndex = 1;
-            this.EthConnRadio.TabStop = true;
-            this.EthConnRadio.Text = "Ethernet Connection";
-            this.EthConnRadio.UseVisualStyleBackColor = true;
+            this.EthConnCheck.AutoSize = true;
+            this.EthConnCheck.Location = new System.Drawing.Point(7, 64);
+            this.EthConnCheck.Name = "EthConnCheck";
+            this.EthConnCheck.Size = new System.Drawing.Size(194, 29);
+            this.EthConnCheck.TabIndex = 10;
+            this.EthConnCheck.Text = "TCP Connection";
+            this.EthConnCheck.UseVisualStyleBackColor = true;
+            this.EthConnCheck.CheckedChanged += new System.EventHandler(this.EthConnCheck_CheckedChanged);
             // 
-            // SerConnRadio
+            // SerConnCheck
             // 
-            this.SerConnRadio.AutoSize = true;
-            this.SerConnRadio.Location = new System.Drawing.Point(7, 30);
-            this.SerConnRadio.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.SerConnRadio.Name = "SerConnRadio";
-            this.SerConnRadio.Size = new System.Drawing.Size(205, 29);
-            this.SerConnRadio.TabIndex = 0;
-            this.SerConnRadio.TabStop = true;
-            this.SerConnRadio.Text = "Serial Connection";
-            this.SerConnRadio.UseVisualStyleBackColor = true;
+            this.SerConnCheck.AutoSize = true;
+            this.SerConnCheck.Location = new System.Drawing.Point(7, 30);
+            this.SerConnCheck.Name = "SerConnCheck";
+            this.SerConnCheck.Size = new System.Drawing.Size(206, 29);
+            this.SerConnCheck.TabIndex = 9;
+            this.SerConnCheck.Text = "Serial Connection";
+            this.SerConnCheck.UseVisualStyleBackColor = true;
+            this.SerConnCheck.CheckedChanged += new System.EventHandler(this.SerConnCheck_CheckedChanged);
             // 
             // SerComGroup
             // 
@@ -3038,6 +3133,7 @@
             this.EthCommGroup.Controls.Add(this.label63);
             this.EthCommGroup.Controls.Add(this.EthIPTxtBox);
             this.EthCommGroup.Controls.Add(this.label62);
+            this.EthCommGroup.Enabled = false;
             this.EthCommGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.EthCommGroup.Location = new System.Drawing.Point(11, 116);
             this.EthCommGroup.Margin = new System.Windows.Forms.Padding(4);
@@ -3179,12 +3275,22 @@
             this.serialPort1.BaudRate = 115200;
             this.serialPort1.ReadBufferSize = 1024;
             this.serialPort1.ReadTimeout = 2000;
-            this.serialPort1.ReceivedBytesThreshold = 1000;
             this.serialPort1.WriteBufferSize = 1024;
+            this.serialPort1.WriteTimeout = 1000;
             // 
             // SerialReadTimer
             // 
             this.SerialReadTimer.Tick += new System.EventHandler(this.SerialReadTimer_Tick);
+            // 
+            // TCPConnButt
+            // 
+            this.TCPConnButt.Location = new System.Drawing.Point(1205, 9);
+            this.TCPConnButt.Name = "TCPConnButt";
+            this.TCPConnButt.Size = new System.Drawing.Size(143, 30);
+            this.TCPConnButt.TabIndex = 21;
+            this.TCPConnButt.Text = "TCP Connect";
+            this.TCPConnButt.UseVisualStyleBackColor = true;
+            this.TCPConnButt.Click += new System.EventHandler(this.TCPConnButt_Click);
             // 
             // Form1
             // 
@@ -3252,6 +3358,8 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
+            this.LogFileSetupGroup.ResumeLayout(false);
+            this.LogFileSetupGroup.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.SerComGroup.ResumeLayout(false);
@@ -3461,7 +3569,7 @@
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.TextBox Var4;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button ShowGraphButt;
         private System.Windows.Forms.Button StreamButt;
         private System.Windows.Forms.Button MoveDownVar;
         private System.Windows.Forms.Button MoveUpVar;
@@ -3483,21 +3591,30 @@
         private System.Windows.Forms.Label label73;
         private System.Windows.Forms.Label label74;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.RadioButton EthConnRadio;
-        private System.Windows.Forms.RadioButton SerConnRadio;
         public System.Windows.Forms.NumericUpDown GrUpdRateSel;
         public System.Windows.Forms.NumericUpDown VarUpdRateSel;
         private System.Windows.Forms.ComboBox SerPortList;
         private System.Windows.Forms.ComboBox SerPBaudList;
         private System.Windows.Forms.Button SerPortListUpdButton;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button ConnButt;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         public System.Windows.Forms.Timer SerialReadTimer;
         public System.IO.Ports.SerialPort serialPort1;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button StatusReqButt;
         public System.Windows.Forms.ToolStripStatusLabel BoxStatustoolStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStreamingStatus;
         private System.Windows.Forms.Button BoxUpdateButt;
+        private System.Windows.Forms.CheckBox EthConnCheck;
+        private System.Windows.Forms.CheckBox SerConnCheck;
+        private System.Windows.Forms.GroupBox LogFileSetupGroup;
+        private System.Windows.Forms.TextBox LogFileFolder;
+        private System.Windows.Forms.Button LogFileSelectFolderButt;
+        private System.Windows.Forms.TextBox LogFileBaseName;
+        private System.Windows.Forms.Label LogFileSetupLabel;
+        private System.Windows.Forms.CheckBox LogFileEnable;
+        private System.Windows.Forms.CheckBox LogFileIncVIN;
+        private System.Windows.Forms.CheckBox LogFileAutoName;
+        private System.Windows.Forms.Button TCPConnButt;
     }
 }
 
