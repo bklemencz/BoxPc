@@ -13,10 +13,11 @@ using System.Windows.Forms;
 using System.IO;
 using System.IO.Ports;
 using ZedGraph;
+using System.Net.Sockets;
 
 namespace IboxTestTCP
 {
-       
+
     public partial class Form1 : Form
     {
         //[DllImport("winmm.dll", EntryPoint = "timeBeginPeriod", SetLastError = true)]
@@ -33,7 +34,8 @@ namespace IboxTestTCP
 
         public const int MAX_PAGES = 10;
         public int HISTORY_SIZE = 2500;
-        public int ConfPageCount =10;
+        public int TCP_TIMEOUT = 2000;
+        public int ConfPageCount = 10;
 
         public struct VarRecord_t
         {
@@ -55,52 +57,57 @@ namespace IboxTestTCP
             public VarRecord_t[] Variables;
 
         }
-        
+
         public VarRecord_t[] IboxCSVread = new VarRecord_t[2500];
         public VarRecord_t[] TempVarRec = new VarRecord_t[50];
-        public int ImpVariableCount,SelectedPage;
+        public int ImpVariableCount, SelectedPage;
         public string LastSerialLine;
         public FileStream LogFileStream;
         public StreamWriter LogFileWriter;
+        public TcpClient MyClient;
+        public NetworkStream MyNetworkStream;
+        public StreamReader MyNetworkReader;
+        public StreamWriter MyNetworkWriter;
+        bool IsTCPConnected;
 
         public static Stopwatch Stopper1 = new Stopwatch();
         public StatusForm St_Form = new StatusForm();
-        
+
         /// <summary>
         /// InterForm Communication shared variables
         /// </summary>
 
-        
 
-        
+
+
         public static RollingPointPairList[] Lines = new RollingPointPairList[24];
         public static double[] LastValues = new double[24];
-        public static int MaxTime,ShGrUpdateTime;
+        public static int MaxTime, ShGrUpdateTime;
         public static PageData_t[] Pages = new PageData_t[MAX_PAGES];
         public static System.Windows.Forms.Timer ShVarUpdTimer = new System.Windows.Forms.Timer();
         public static System.Windows.Forms.Timer ShTCPTimer = new System.Windows.Forms.Timer();
         public static ComboBox ShPgSelCombo = new ComboBox();
         public static int counter;
         public static int BoxState;
-        
-      
+
+
         public Form1()
         {
 
             timeBeginPeriod(1);
-            
+
             //System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
-            
+
             InitializeComponent();
 
             LoadDefaultPageSetupCSV();
             InitDisplayComponents();
             InitTimers();
             LoadDefaultConfig();
-            
+
             St_Form.Show();
-            
-      
+
+
 
         }
 
@@ -111,7 +118,7 @@ namespace IboxTestTCP
             ShGrUpdateTime = ShGrUpdateTime = (Int32)GrUpdRateSel.Value;
             TCPReadTimer.Interval = 50;
             ShTCPTimer = TCPReadTimer;
-            
+
         }
 
         private void InitDisplayComponents()
@@ -122,7 +129,7 @@ namespace IboxTestTCP
             {
                 Lines[i] = new RollingPointPairList(HISTORY_SIZE);
             }
-            
+
             foreach (string s in SerialPort.GetPortNames())
             {
                 SerPortList.Items.Add(s);
@@ -132,6 +139,7 @@ namespace IboxTestTCP
             SerPBaudList.SelectedIndex = 1;
             EthCommGroup.Enabled = false;
             SerComGroup.Enabled = true;
+            MyClient = new TcpClient();
 
         }
 
@@ -139,7 +147,7 @@ namespace IboxTestTCP
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             String FileLine;
-            int LineNbr=0;
+            int LineNbr = 0;
 
             // Set filter options and filter index.
             openFileDialog1.Filter = "CSV Files (.csv)|*.csv|All Files (*.*)|*.*";
@@ -163,10 +171,11 @@ namespace IboxTestTCP
                         IboxCSVread[LineNbr].Length = Int16.Parse(LineItems[6]);
                         if (LineItems[7].Contains("E = H*"))
                         {
-                            String Substr = LineItems[7].Replace("E = H* ","");
+                            String Substr = LineItems[7].Replace("E = H* ", "");
                             IboxCSVread[LineNbr].Mult = Double.Parse(Substr);
                             IboxCSVread[LineNbr].Offset = 0;
-                        } else
+                        }
+                        else
                             if (LineItems[7].Contains("E = (H") && !LineItems[7].Contains("*"))
                             {
                                 String Substr = LineItems[7].Replace("E = (H ", "");
@@ -174,12 +183,14 @@ namespace IboxTestTCP
                                 Substr = Substr.Replace(" ", "");
                                 IboxCSVread[LineNbr].Offset = Int16.Parse(Substr);
                                 IboxCSVread[LineNbr].Mult = 1;
-                            } else
+                            }
+                            else
                                 if (LineItems[7] == "E = H")
                                 {
                                     IboxCSVread[LineNbr].Offset = 0;
                                     IboxCSVread[LineNbr].Mult = 1;
-                                } else
+                                }
+                                else
                                     if (LineItems[7].Contains("E = (H") && LineItems[7].Contains("*"))
                                     {
                                         String Substr = LineItems[7].Substring(LineItems[7].IndexOf("*") + 2);
@@ -200,13 +211,13 @@ namespace IboxTestTCP
                 }
                 ImpVariableCount = LineNbr;
                 IboxCSVImpList.Items.Clear();
-                for (int i=0; i<ImpVariableCount;i++)
+                for (int i = 0; i < ImpVariableCount; i++)
                 {
                     IboxCSVImpList.Items.Add(IboxCSVread[i].Name);
 
                 }
             }
-                
+
 
         }
 
@@ -232,41 +243,43 @@ namespace IboxTestTCP
             PageVarList.Update();
         }
 
-        private void LoadDefaultPageSetupCSV ()
+        private void LoadDefaultPageSetupCSV()
         {
-                int ActPage;
-                String InPutLine;
-                String[] InlineItems;
-                
-                for (int i = 0; i < MAX_PAGES; i++)
+            int ActPage;
+            String InPutLine;
+            String[] InlineItems;
+
+            for (int i = 0; i < MAX_PAGES; i++)
+            {
+                Pages[i].Variables = new VarRecord_t[50];
+            }
+
+            FileStream inStr = new FileStream("DefaultConfig.csv", FileMode.Open);
+            var file = new StreamReader(inStr, Encoding.ASCII);
+            while (!file.EndOfStream)
+            {
+                InPutLine = file.ReadLine();
+                InlineItems = InPutLine.Split(',');
+                if (InlineItems[0] == "CONFDEF")
                 {
-                    Pages[i].Variables = new VarRecord_t[50];
-                }
-            
-                FileStream inStr = new FileStream("DefaultConfig.csv", FileMode.Open);
-                var file = new StreamReader(inStr, Encoding.ASCII);
-                while(!file.EndOfStream)
-                {
-                    InPutLine = file.ReadLine();
-                    InlineItems = InPutLine.Split(',');
-                    if (InlineItems[0] == "CONFDEF")
+                    PageSelectCombo.Items.Clear();
+                    if (Int32.Parse(InlineItems[1]) > MAX_PAGES)
                     {
-                        PageSelectCombo.Items.Clear();
-                        if (Int32.Parse(InlineItems[1]) > MAX_PAGES)
-                        {
-                            ConfPageCount = 10;
-                        } else
-                        {
-                            ConfPageCount = Int32.Parse(InlineItems[1]);
-                        }
-                    } else
-                    if(InlineItems[0] == "PAGEDEF")
+                        ConfPageCount = 10;
+                    }
+                    else
+                    {
+                        ConfPageCount = Int32.Parse(InlineItems[1]);
+                    }
+                }
+                else
+                    if (InlineItems[0] == "PAGEDEF")
                     {
                         ActPage = Int32.Parse(InlineItems[1]);
                         Pages[ActPage].Name = InlineItems[2];
                         PageSelectCombo.Items.Add(InlineItems[2]);
                         Pages[ActPage].VarCount = Int32.Parse(InlineItems[3]);
-                        for (int i = 0; i < Pages[ActPage].VarCount;i++ )
+                        for (int i = 0; i < Pages[ActPage].VarCount; i++)
                         {
                             InPutLine = file.ReadLine();
                             InlineItems = InPutLine.Split(',');
@@ -280,33 +293,33 @@ namespace IboxTestTCP
                     }
 
 
-                }
-                file.Close();
-                inStr.Close();
-                for (int i=0; i<ConfPageCount;i++)
-                {
-                    VarViewPgSelCombo.Items.Add(Pages[i].Name);
-                }
-                PageSelectCombo.SelectedIndex = 0;
-                VarViewPgSelCombo.SelectedIndex = 0;
+            }
+            file.Close();
+            inStr.Close();
+            for (int i = 0; i < ConfPageCount; i++)
+            {
+                VarViewPgSelCombo.Items.Add(Pages[i].Name);
+            }
+            PageSelectCombo.SelectedIndex = 0;
+            VarViewPgSelCombo.SelectedIndex = 0;
 
-                for (int i = 0; i < Pages[0].VarCount; i++)
-                {
-                    String BoxName = "Var" + (i + 1).ToString() + "Gr";
-                    var Item = this.Controls.Find(BoxName, true);
-                    Item[0].Text = Pages[0].Variables[i].Name;
-                    Item[0].Visible = true;
-                }
+            for (int i = 0; i < Pages[0].VarCount; i++)
+            {
+                String BoxName = "Var" + (i + 1).ToString() + "Gr";
+                var Item = this.Controls.Find(BoxName, true);
+                Item[0].Text = Pages[0].Variables[i].Name;
+                Item[0].Visible = true;
+            }
         }
 
         private void AddVarToPageButt_Click(object sender, EventArgs e)
         {
-            for (int i=0; i<IboxCSVImpList.Items.Count; i++)
+            for (int i = 0; i < IboxCSVImpList.Items.Count; i++)
             {
-                if(IboxCSVImpList.GetItemChecked(i))
+                if (IboxCSVImpList.GetItemChecked(i))
                 {
 
-                   // Pages[SelectedPage].Name = this.RateSelectCombo.GetItemText(this.RateSelectCombo.SelectedItem);
+                    // Pages[SelectedPage].Name = this.RateSelectCombo.GetItemText(this.RateSelectCombo.SelectedItem);
                     Pages[SelectedPage].Variables[Pages[SelectedPage].VarCount].Name = IboxCSVread[i].Name;
                     Pages[SelectedPage].Variables[Pages[SelectedPage].VarCount].Address = IboxCSVread[i].Address;
                     Pages[SelectedPage].Variables[Pages[SelectedPage].VarCount].Length = IboxCSVread[i].Length;
@@ -320,39 +333,39 @@ namespace IboxTestTCP
             }
             PageVarList.Invalidate();
             PageVarList.Update();
-            
+
         }
 
         private void SaveDefConfButt_Click(object sender, EventArgs e)
         {
-                String OutPutLine;
-                FileStream inStr = new FileStream("DefaultConfig.csv", FileMode.Create);
-                var file = new StreamWriter(inStr, Encoding.ASCII);
-                OutPutLine = "Name,Address,Length,Multiplier,Offset,Samplerate";
+            String OutPutLine;
+            FileStream inStr = new FileStream("DefaultConfig.csv", FileMode.Create);
+            var file = new StreamWriter(inStr, Encoding.ASCII);
+            OutPutLine = "Name,Address,Length,Multiplier,Offset,Samplerate";
+            file.WriteLine(OutPutLine);
+            OutPutLine = "CONFDEF," + ConfPageCount.ToString();
+            file.WriteLine(OutPutLine);
+            for (int i = 0; i < ConfPageCount; i++)
+            {
+                OutPutLine = "PAGEDEF,";
+                OutPutLine += i + ",";
+                OutPutLine += Pages[i].Name;
+                OutPutLine += "," + Pages[i].VarCount;
                 file.WriteLine(OutPutLine);
-                OutPutLine = "CONFDEF," + ConfPageCount.ToString();
-                file.WriteLine(OutPutLine);
-                for(int i=0; i<ConfPageCount;i++)
+                for (int j = 0; j < Pages[i].VarCount; j++)
                 {
-                    OutPutLine = "PAGEDEF,";
-                    OutPutLine += i + ",";
-                    OutPutLine += Pages[i].Name;
-                    OutPutLine += "," + Pages[i].VarCount;
+                    OutPutLine = Pages[i].Variables[j].Name + ",";
+                    OutPutLine += Pages[i].Variables[j].Address.ToString() + ",";
+                    OutPutLine += Pages[i].Variables[j].Length.ToString() + ",";
+                    OutPutLine += Pages[i].Variables[j].Mult.ToString() + ",";
+                    OutPutLine += Pages[i].Variables[j].Offset.ToString() + ",";
+                    OutPutLine += Pages[i].Variables[j].Ratems.ToString();
                     file.WriteLine(OutPutLine);
-                    for(int j=0;j<Pages[i].VarCount;j++)
-                    {
-                        OutPutLine = Pages[i].Variables[j].Name + ",";
-                        OutPutLine += Pages[i].Variables[j].Address.ToString() + ",";
-                        OutPutLine += Pages[i].Variables[j].Length.ToString() + ",";
-                        OutPutLine += Pages[i].Variables[j].Mult.ToString() + ",";
-                        OutPutLine += Pages[i].Variables[j].Offset.ToString() + ",";
-                        OutPutLine += Pages[i].Variables[j].Ratems.ToString();
-                        file.WriteLine(OutPutLine);
-                    }
                 }
-                file.Flush();
-                file.Close();
-                inStr.Close();
+            }
+            file.Flush();
+            file.Close();
+            inStr.Close();
         }
 
         private void PageVarList_SelectedIndexChanged(object sender, EventArgs e)
@@ -366,12 +379,13 @@ namespace IboxTestTCP
             if ((RateIndex = RateSelectCombo.FindStringExact(Pages[ActPage].Variables[PageVarList.SelectedIndex].Ratems.ToString())) == ListBox.NoMatches)
             {
                 RateSelectCombo.SelectedIndex = RateSelectCombo.FindStringExact("50");
-            } else
+            }
+            else
             {
                 RateSelectCombo.SelectedIndex = RateIndex;
             }
 
-            
+
         }
 
         private void RateSelectCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -400,7 +414,7 @@ namespace IboxTestTCP
             if (serialPort1.IsOpen)
             {
                 SerialHandShake();
-                IboxTestTCP.StatusForm.StBox.Items.Add("Page " + Pages[VarViewPgSelCombo.SelectedIndex].Name +  " Downloaded to BOX!");
+                IboxTestTCP.StatusForm.StBox.Items.Add("Page " + Pages[VarViewPgSelCombo.SelectedIndex].Name + " Downloaded to BOX!");
             }
         }
 
@@ -408,8 +422,8 @@ namespace IboxTestTCP
         {
             int VarCnt = Pages[PageSelectCombo.SelectedIndex].VarCount;
             int ItemToRem = PageVarList.SelectedIndex;
-            
-            for (int i=0;i<VarCnt;i++)
+
+            for (int i = 0; i < VarCnt; i++)
             {
                 TempVarRec[i].Name = Pages[PageSelectCombo.SelectedIndex].Variables[i].Name;
                 TempVarRec[i].Address = Pages[PageSelectCombo.SelectedIndex].Variables[i].Address;
@@ -419,18 +433,18 @@ namespace IboxTestTCP
                 TempVarRec[i].Ratems = Pages[PageSelectCombo.SelectedIndex].Variables[i].Ratems;
             }
 
-            for(int i=ItemToRem+1; i<VarCnt;i++)
+            for (int i = ItemToRem + 1; i < VarCnt; i++)
             {
-                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Name = TempVarRec[i].Name;
-                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Address = TempVarRec[i].Address;
-                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Length = TempVarRec[i].Length;
-                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Mult = TempVarRec[i].Mult;
-                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Offset = TempVarRec[i].Offset;
-                Pages[PageSelectCombo.SelectedIndex].Variables[i-1].Ratems = TempVarRec[i].Ratems;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i - 1].Name = TempVarRec[i].Name;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i - 1].Address = TempVarRec[i].Address;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i - 1].Length = TempVarRec[i].Length;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i - 1].Mult = TempVarRec[i].Mult;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i - 1].Offset = TempVarRec[i].Offset;
+                Pages[PageSelectCombo.SelectedIndex].Variables[i - 1].Ratems = TempVarRec[i].Ratems;
             }
             Pages[PageSelectCombo.SelectedIndex].VarCount--;
             PageVarList.Items.Clear();
-            for(int i=0;i<VarCnt-1;i++)
+            for (int i = 0; i < VarCnt - 1; i++)
             {
                 PageVarList.Items.Add(Pages[PageSelectCombo.SelectedIndex].Variables[i].Name);
             }
@@ -486,31 +500,32 @@ namespace IboxTestTCP
         {
             Form2 NewForm = new Form2();
             NewForm.Show();
-        }     
-        
+        }
+
         private void TCPReadTimer_Tick(object sender, EventArgs e)
         {
-            
+
             if (Stopper1.IsRunning)
-         {
-             Stopper1.Stop();
-             label70.Text = Stopper1.ElapsedMilliseconds.ToString();
-         } else
-         {
-             Stopper1.Reset();
-             Stopper1.Start();
-         }
+            {
+                Stopper1.Stop();
+                label70.Text = Stopper1.ElapsedMilliseconds.ToString();
+            }
+            else
+            {
+                Stopper1.Reset();
+                Stopper1.Start();
+            }
             for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
-            { 
-                Lines[i].Add(counter*50, counter * 2*(i+1));
-                if (counter*50 > MaxTime) MaxTime = counter*50;
+            {
+                Lines[i].Add(counter * 50, counter * 2 * (i + 1));
+                if (counter * 50 > MaxTime) MaxTime = counter * 50;
             }
             counter++;
         }
 
         private void GrUpdRateSel_ValueChanged(object sender, EventArgs e)
         {
-            ShGrUpdateTime = (Int32) GrUpdRateSel.Value;
+            ShGrUpdateTime = (Int32)GrUpdRateSel.Value;
         }
 
         private void VarUpdRateSel_ValueChanged(object sender, EventArgs e)
@@ -539,25 +554,25 @@ namespace IboxTestTCP
             String OutPutLine;
             FileStream inStr = new FileStream("DefaultSetup.csv", FileMode.Create);
             var file = new StreamWriter(inStr, Encoding.ASCII);
-            
-            OutPutLine = "SerialConn," + SerConnCheck.Checked.ToString(); 
+
+            OutPutLine = "SerialConn," + SerConnCheck.Checked.ToString();
             file.WriteLine(OutPutLine);
-            OutPutLine = "EthConn," + EthConnCheck.Checked.ToString(); 
+            OutPutLine = "EthConn," + EthConnCheck.Checked.ToString();
             file.WriteLine(OutPutLine);
-            OutPutLine = "EthIP," + EthIPTxtBox.Text; 
+            OutPutLine = "EthIP," + EthIPTxtBox.Text;
             file.WriteLine(OutPutLine);
-            OutPutLine = "EthPort," + EthPortTxtBox.Text; 
+            OutPutLine = "EthPort," + EthPortTxtBox.Text;
             file.WriteLine(OutPutLine);
             if (SerPortList.Items.Count != 0)
                 OutPutLine = "Serport," + SerPortList.SelectedItem.ToString();
             else
                 OutPutLine = "Serport,0";
             file.WriteLine(OutPutLine);
-            OutPutLine = "SerBaud," + SerPBaudList.SelectedItem.ToString(); 
+            OutPutLine = "SerBaud," + SerPBaudList.SelectedItem.ToString();
             file.WriteLine(OutPutLine);
-            OutPutLine = "VarUpd," + VarUpdRateSel.Value.ToString(); 
+            OutPutLine = "VarUpd," + VarUpdRateSel.Value.ToString();
             file.WriteLine(OutPutLine);
-            OutPutLine = "GraphUpd," + GrUpdRateSel.Value.ToString(); 
+            OutPutLine = "GraphUpd," + GrUpdRateSel.Value.ToString();
             file.WriteLine(OutPutLine);
             OutPutLine = "PageSel," + VarViewPgSelCombo.SelectedItem.ToString();
             file.WriteLine(OutPutLine);
@@ -584,7 +599,7 @@ namespace IboxTestTCP
             {
                 LastLine = file.ReadLine();
                 LineItems = LastLine.Split(',');
-                switch(LineItems[0])
+                switch (LineItems[0])
                 {
                     case "SerialConn":
                         if (LineItems[1] == "True") SerConnCheck.Checked = true;
@@ -602,7 +617,7 @@ namespace IboxTestTCP
                         break;
                     case "Serport":
                         int Selindex = SerPortList.FindStringExact(LineItems[1]);
-                        if (Selindex >= 0) SerPortList.SelectedIndex = Selindex; 
+                        if (Selindex >= 0) SerPortList.SelectedIndex = Selindex;
                         break;
                     case "SerBaud":
                         SerPBaudList.SelectedIndex = SerPBaudList.FindStringExact(LineItems[1]);
@@ -659,7 +674,8 @@ namespace IboxTestTCP
                     MessageBox.Show("Serial Port Open Error:\n" + ex.Message.ToString());
 
                 }
-            } else
+            }
+            else
             {
                 bool IsOKToClose = false;
                 PurgeSerial();
@@ -688,7 +704,7 @@ namespace IboxTestTCP
                     }
                 }
             }
-            
+
         }
 
         private bool SerialHandShake()
@@ -697,11 +713,11 @@ namespace IboxTestTCP
             string[] LineItems;
             if (serialPort1.IsOpen)
             {
-                 
+
                 //////////////////////////////////////// 
                 //Read First Line After Version Request
                 ////////////////////////////////////////
-                #region SerialVerReq  
+                #region SerialVerReq
                 try
                 {
                     serialPort1.DiscardOutBuffer();
@@ -726,16 +742,18 @@ namespace IboxTestTCP
                         {
                             AddStatusMessage("BOX ID OK! Downloading Page Config...");
                             BoxStatustoolStrip.ForeColor = Color.Green;
-                            BoxStatustoolStrip.Text = "Box Online. " + LineItems[2].Replace("\r","").Replace("\n","");
+                            BoxStatustoolStrip.Text = "Box Online. " + LineItems[2].Replace("\r", "").Replace("\n", "");
                             BoxState = 2;
-                        } else
+                        }
+                        else
                         {
                             MessageBox.Show("Box not connected, or Version Not Supported!\nSERAIL PORT CLOSED!");
                             serialPort1.Close();
                             BoxState = 0;
                             return false;
                         }
-                    } else
+                    }
+                    else
                     {
                         MessageBox.Show("Box not connected, or Wrong Port Number!\nSERAIL PORT CLOSED!");
                         serialPort1.Close();
@@ -753,12 +771,12 @@ namespace IboxTestTCP
 
                 }
             }
-            #endregion SerialVerReq
-                
-                ////////////////////////////////////////////////////
-                // Try to send the variable information of the page
-                ////////////////////////////////////////////////////
-                #region SerialSendPageInfo
+                #endregion SerialVerReq
+
+            ////////////////////////////////////////////////////
+            // Try to send the variable information of the page
+            ////////////////////////////////////////////////////
+            #region SerialSendPageInfo
             if (serialPort1.IsOpen)
             {
                 try
@@ -766,9 +784,9 @@ namespace IboxTestTCP
                     PurgeSerial();
                     LastLine = "/PAGE/" + Pages[VarViewPgSelCombo.SelectedIndex].VarCount.ToString();
                     serialPort1.WriteLine(LastLine);
-   
+
                     LastLine = serialPort1.ReadLine();
-   
+
                     if (LastLine.Contains("/OK"))
                     {
                         for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
@@ -780,11 +798,11 @@ namespace IboxTestTCP
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Mult.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Offset.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Ratems.ToString();
-                            
+
                             serialPort1.WriteLine(LastLine);
-                    
+
                             LastLine = serialPort1.ReadLine();  //Wait for ACK
-                            
+
                             if (!LastLine.Contains("/OK"))      //ACK Not OK
                             {
                                 SerialErrorParse(LastLine);
@@ -811,16 +829,16 @@ namespace IboxTestTCP
                     BoxState = 0;
                     return false;
                 }
-                #endregion SerialSendPageInfo
+            #endregion SerialSendPageInfo
 
-            } 
+            }
             if (!serialPort1.IsOpen)
             {
                 MessageBox.Show("Serial Port Not Open, Connect first!");
                 return false;
             }
             return true;
-       }
+        }
 
         private void SerialErrorParse(string LastLine)
         {
@@ -835,7 +853,7 @@ namespace IboxTestTCP
                 try
                 {
                     serialPort1.WriteLine("/STRTSTREAM");
-                    LastLine = serialPort1.ReadLine().Replace("\r","").Replace("\n","");
+                    LastLine = serialPort1.ReadLine().Replace("\r", "").Replace("\n", "");
                     if (LastLine == "/OK")
                     {
                         PurgeSerial();
@@ -849,9 +867,10 @@ namespace IboxTestTCP
                     MessageBox.Show("Communication Protocol Error!\nSERAIL PORT CLOSED!");
                     serialPort1.Close();
                     BoxState = 0;
-                    return false;            
+                    return false;
                 }
-            } else
+            }
+            else
             {
                 MessageBox.Show("Serial Port Not Opened");
                 return false;
@@ -877,13 +896,13 @@ namespace IboxTestTCP
                     serialPort1.WriteLine("/DISCONNECT");
                     //AddStatusMessage("Sent: /Disconnect");
                     LastLine = serialPort1.ReadLine().Replace("\r", "").Replace("\n", "");
-                   // AddStatusMessage("Rec: " + LastLine);
+                    // AddStatusMessage("Rec: " + LastLine);
                     if (LastLine == "/OK")
                     {
                         PurgeSerial();
                         BoxState = 3;
                         AddStatusMessage("Serial Streaming stopped! New Box State: " + BoxState.ToString());
-                        
+
                         return true;
                     }
                 }
@@ -905,14 +924,14 @@ namespace IboxTestTCP
 
         private void ConnButt_Click(object sender, EventArgs e)
         {
-            
+
             SerialConnect();
             if (serialPort1.IsOpen)
             {
-               // AddStatusMessage("Connecting on serial bus:" + serialPort1.PortName);
+                // AddStatusMessage("Connecting on serial bus:" + serialPort1.PortName);
                 SerialHandShake();
                 ConnButt.Text = "Disconnect";
-                if (LogFileEnable.Checked) OpenLogFile(); 
+                if (LogFileEnable.Checked) OpenLogFile();
                 StatusReqButt.Enabled = true;
                 BoxUpdateButt.Enabled = true;
                 StreamButt.Enabled = true;
@@ -942,7 +961,7 @@ namespace IboxTestTCP
             LogFileWriter = new StreamWriter(LogFileStream, Encoding.ASCII);
             AddStatusMessage("Log file Created: " + LogFileName);
             string OutPutline = "TimeStamp";
-            for (int i=0; i<Pages[VarViewPgSelCombo.SelectedIndex].VarCount;i++)
+            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
             {
                 OutPutline += "," + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Name;
             }
@@ -974,9 +993,9 @@ namespace IboxTestTCP
                         {
                             LastItems = LastSerialLine.Replace("\n", "").Replace("\r", "").Split(',');
                             if (LastItems[0] == "") LastItems[0] = MaxTime.ToString();                  //If no timestamp use the last one
-                                TimeRead = Int32.Parse(LastItems[0]);
-                                MaxTime = TimeRead;
-                            
+                            TimeRead = Int32.Parse(LastItems[0]);
+                            MaxTime = TimeRead;
+
                             for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
                             {
 
@@ -1011,13 +1030,14 @@ namespace IboxTestTCP
                 AddStatusMessage("Serial Port Not Open. Internal software error, please restart!");
             }
         }
-        
+
         private void PageStatusReq_Click(object sender, EventArgs e)
         {
             if (serialPort1.IsOpen)
             {
                 SerReqPageStatus();
-            } else
+            }
+            else
             {
                 MessageBox.Show("Serial Port Not Open, Connect first!");
             }
@@ -1074,9 +1094,161 @@ namespace IboxTestTCP
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             DialogResult result = fbd.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK) LogFileFolder.Text = fbd.SelectedPath; 
+            if (result == System.Windows.Forms.DialogResult.OK) LogFileFolder.Text = fbd.SelectedPath;
         }
-       
 
+        private void TCPConnButt_Click(object sender, EventArgs e)
+        {
+
+            if (!MyClient.Connected)
+            {
+                try
+                {
+                    AddStatusMessage("Connecting to BOX at: " + EthIPTxtBox.Text + " Port: " + EthPortTxtBox.Text);
+                    MyClient.Connect(System.Net.IPAddress.Parse(EthIPTxtBox.Text), Int32.Parse(EthPortTxtBox.Text));
+                    if (MyClient.Connected)
+                    {
+                        AddStatusMessage("Connected to TCP Server!");
+                        TCPConnButt.Text = "TCP Disconnect";
+                        MyNetworkStream = MyClient.GetStream();
+                        MyNetworkStream.ReadTimeout = TCP_TIMEOUT;
+                        MyNetworkStream.WriteTimeout = TCP_TIMEOUT;
+                        MyNetworkReader = new StreamReader(MyNetworkStream);
+                        MyNetworkWriter = new StreamWriter(MyNetworkStream);
+                        TCPHandShake();
+
+                    }
+                }
+                catch
+                {
+                    AddStatusMessage("TCP Connection Timeout!");
+                }
+            }
+            else
+            {
+                AddStatusMessage("Closing TCP Connection!");             
+                MyNetworkWriter.Flush();
+                MyNetworkWriter.Close();
+                MyNetworkWriter.Dispose();
+                MyNetworkReader.Close();
+                MyNetworkReader.Dispose();
+                MyNetworkStream.Close();
+                MyClient.Close();
+                AddStatusMessage("TCP Connection Closed!");
+                TCPConnButt.Text = "TCP Connect";
+                MyClient = new TcpClient();
+            }
+
+
+        }
+
+        private bool TCPHandShake()
+        {
+            string LastLine;
+            string[] LineItems;
+            
+            if (MyClient.Connected)
+            {
+                
+                //////////////////////////////////////////////////////////////////////
+                /// GETTING BOX VERSION INFORMATION
+                //////////////////////////////////////////////////////////////////////
+ 
+                try
+                {
+                    MyNetworkWriter.WriteLine("");
+                    LastLine = MyNetworkReader.ReadLine();
+                    MyNetworkWriter.WriteLine("/VER");
+                    LastLine = MyNetworkReader.ReadLine();
+
+                    if (LastLine.StartsWith("/ERROR"))
+                    {
+                        AddStatusMessage("TCP Error: " + LastLine);
+                        return false;
+                    }
+
+                    LastLine = LastLine.TrimStart('/');
+                    LineItems = LastLine.Split('/');
+                    if (LineItems[2] != "")
+                    {
+                        if (LineItems[1] == "BKBOX")
+                        {
+                            AddStatusMessage("BOX ID OK! Downloading Page Config...");
+                            BoxStatustoolStrip.ForeColor = Color.Green;
+                            BoxStatustoolStrip.Text = "Box Online. " + LineItems[2].Replace("\r", "").Replace("\n", "");
+                            BoxState = 2;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Box not connected, or Version Not Supported!");
+                            BoxState = 0;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Box not connected, or Wrong IP!");
+                        BoxState = 0;
+                        return false;
+                    }
+                } catch
+                {
+                    AddStatusMessage("TCP Communication Timeout Error! Please disconnect and reconnect!");
+                    return false;
+                }
+                ///////////////////////////////////////////////////////////////////////////////
+                //////// DOWNLOADING PAGE DATA
+                ///////////////////////////////////////////////////////////////////////////////
+                try
+                {
+                    LastLine = "/PAGE/" + Pages[VarViewPgSelCombo.SelectedIndex].VarCount.ToString();
+                    MyNetworkWriter.WriteLine(LastLine);
+
+                    LastLine = MyNetworkReader.ReadLine();
+
+                    if (LastLine.Contains("/OK"))
+                    {
+                        for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                        {
+                            LastLine = "/VAR";
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Name;
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Address.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Length.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Mult.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Offset.ToString();
+                            LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Ratems.ToString();
+
+                            MyNetworkWriter.WriteLine(LastLine);
+
+                            LastLine = MyNetworkReader.ReadLine();  //Wait for ACK
+
+                            if (!LastLine.Contains("/OK"))      //ACK Not OK
+                            {
+                                MessageBox.Show("Communication Protocol Error! Please Restart!");
+                                i = Pages[VarViewPgSelCombo.SelectedIndex].VarCount;
+                                BoxState = 0;
+                                return false;
+                            }
+                        }
+                        BoxState = 3;
+                        toolStripStatusLabel2.ForeColor = Color.Green;
+                        toolStripStatusLabel2.Text = "Conf OK";
+                        AddStatusMessage("Page Configuration Successfully downloaded to the BOX! New State: 3");
+                    }
+                }
+                catch
+                {
+                    AddStatusMessage("ERROR while downloading variable information! Please disconnect and reconnect!");
+                    return false;
+                }
+            
+            }                           // End of client connected check
+            else
+            {
+                AddStatusMessage("Not Connected to the BOX! Please Reconnect!");
+                return false;
+            }
+            return true;
+        }                                   // End of tcphandshake
     }
 }

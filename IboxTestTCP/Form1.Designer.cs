@@ -220,6 +220,14 @@
             this.IboxCSVImpList = new System.Windows.Forms.CheckedListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.LogFileSetupGroup = new System.Windows.Forms.GroupBox();
+            this.LogFileFolder = new System.Windows.Forms.TextBox();
+            this.LogFileSelectFolderButt = new System.Windows.Forms.Button();
+            this.LogFileBaseName = new System.Windows.Forms.TextBox();
+            this.LogFileSetupLabel = new System.Windows.Forms.Label();
+            this.LogFileEnable = new System.Windows.Forms.CheckBox();
+            this.LogFileIncVIN = new System.Windows.Forms.CheckBox();
+            this.LogFileAutoName = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.EthConnCheck = new System.Windows.Forms.CheckBox();
             this.SerConnCheck = new System.Windows.Forms.CheckBox();
@@ -254,14 +262,7 @@
             this.TCPReadTimer = new System.Windows.Forms.Timer(this.components);
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.SerialReadTimer = new System.Windows.Forms.Timer(this.components);
-            this.LogFileSetupGroup = new System.Windows.Forms.GroupBox();
-            this.LogFileAutoName = new System.Windows.Forms.CheckBox();
-            this.LogFileIncVIN = new System.Windows.Forms.CheckBox();
-            this.LogFileEnable = new System.Windows.Forms.CheckBox();
-            this.LogFileSetupLabel = new System.Windows.Forms.Label();
-            this.LogFileBaseName = new System.Windows.Forms.TextBox();
-            this.LogFileSelectFolderButt = new System.Windows.Forms.Button();
-            this.LogFileFolder = new System.Windows.Forms.TextBox();
+            this.TCPConnButt = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.Var24Gr.SuspendLayout();
@@ -290,6 +291,7 @@
             this.Var1Gr.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.LogFileSetupGroup.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.SerComGroup.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -298,7 +300,6 @@
             this.EthCommGroup.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.LogFileSetupGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -316,6 +317,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.TCPConnButt);
             this.tabPage1.Controls.Add(this.BoxUpdateButt);
             this.tabPage1.Controls.Add(this.StatusReqButt);
             this.tabPage1.Controls.Add(this.ConnButt);
@@ -2822,6 +2824,88 @@
             this.tabPage4.Text = "Application Settings";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // LogFileSetupGroup
+            // 
+            this.LogFileSetupGroup.Controls.Add(this.LogFileFolder);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileSelectFolderButt);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileBaseName);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileSetupLabel);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileEnable);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileIncVIN);
+            this.LogFileSetupGroup.Controls.Add(this.LogFileAutoName);
+            this.LogFileSetupGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.LogFileSetupGroup.Location = new System.Drawing.Point(335, 8);
+            this.LogFileSetupGroup.Margin = new System.Windows.Forms.Padding(4);
+            this.LogFileSetupGroup.Name = "LogFileSetupGroup";
+            this.LogFileSetupGroup.Padding = new System.Windows.Forms.Padding(4);
+            this.LogFileSetupGroup.Size = new System.Drawing.Size(316, 221);
+            this.LogFileSetupGroup.TabIndex = 11;
+            this.LogFileSetupGroup.TabStop = false;
+            this.LogFileSetupGroup.Text = "Logging To File Setup";
+            // 
+            // LogFileFolder
+            // 
+            this.LogFileFolder.Location = new System.Drawing.Point(7, 144);
+            this.LogFileFolder.Name = "LogFileFolder";
+            this.LogFileFolder.Size = new System.Drawing.Size(302, 30);
+            this.LogFileFolder.TabIndex = 15;
+            // 
+            // LogFileSelectFolderButt
+            // 
+            this.LogFileSelectFolderButt.Location = new System.Drawing.Point(7, 177);
+            this.LogFileSelectFolderButt.Name = "LogFileSelectFolderButt";
+            this.LogFileSelectFolderButt.Size = new System.Drawing.Size(302, 34);
+            this.LogFileSelectFolderButt.TabIndex = 14;
+            this.LogFileSelectFolderButt.Text = "Select Folder";
+            this.LogFileSelectFolderButt.UseVisualStyleBackColor = true;
+            this.LogFileSelectFolderButt.Click += new System.EventHandler(this.LogFileSelectFolderButt_Click);
+            // 
+            // LogFileBaseName
+            // 
+            this.LogFileBaseName.Location = new System.Drawing.Point(143, 109);
+            this.LogFileBaseName.Name = "LogFileBaseName";
+            this.LogFileBaseName.Size = new System.Drawing.Size(166, 30);
+            this.LogFileBaseName.TabIndex = 13;
+            // 
+            // LogFileSetupLabel
+            // 
+            this.LogFileSetupLabel.AutoSize = true;
+            this.LogFileSetupLabel.Location = new System.Drawing.Point(7, 112);
+            this.LogFileSetupLabel.Name = "LogFileSetupLabel";
+            this.LogFileSetupLabel.Size = new System.Drawing.Size(130, 25);
+            this.LogFileSetupLabel.TabIndex = 12;
+            this.LogFileSetupLabel.Text = "Base Name:";
+            // 
+            // LogFileEnable
+            // 
+            this.LogFileEnable.AutoSize = true;
+            this.LogFileEnable.Location = new System.Drawing.Point(7, 28);
+            this.LogFileEnable.Name = "LogFileEnable";
+            this.LogFileEnable.Size = new System.Drawing.Size(249, 29);
+            this.LogFileEnable.TabIndex = 11;
+            this.LogFileEnable.Text = "Enable Logging to File";
+            this.LogFileEnable.UseVisualStyleBackColor = true;
+            // 
+            // LogFileIncVIN
+            // 
+            this.LogFileIncVIN.AutoSize = true;
+            this.LogFileIncVIN.Location = new System.Drawing.Point(7, 80);
+            this.LogFileIncVIN.Name = "LogFileIncVIN";
+            this.LogFileIncVIN.Size = new System.Drawing.Size(231, 29);
+            this.LogFileIncVIN.TabIndex = 10;
+            this.LogFileIncVIN.Text = "Include VIN in Name";
+            this.LogFileIncVIN.UseVisualStyleBackColor = true;
+            // 
+            // LogFileAutoName
+            // 
+            this.LogFileAutoName.AutoSize = true;
+            this.LogFileAutoName.Location = new System.Drawing.Point(7, 54);
+            this.LogFileAutoName.Name = "LogFileAutoName";
+            this.LogFileAutoName.Size = new System.Drawing.Size(182, 29);
+            this.LogFileAutoName.TabIndex = 9;
+            this.LogFileAutoName.Text = "Auto File Name";
+            this.LogFileAutoName.UseVisualStyleBackColor = true;
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.EthConnCheck);
@@ -3198,87 +3282,15 @@
             // 
             this.SerialReadTimer.Tick += new System.EventHandler(this.SerialReadTimer_Tick);
             // 
-            // LogFileSetupGroup
+            // TCPConnButt
             // 
-            this.LogFileSetupGroup.Controls.Add(this.LogFileFolder);
-            this.LogFileSetupGroup.Controls.Add(this.LogFileSelectFolderButt);
-            this.LogFileSetupGroup.Controls.Add(this.LogFileBaseName);
-            this.LogFileSetupGroup.Controls.Add(this.LogFileSetupLabel);
-            this.LogFileSetupGroup.Controls.Add(this.LogFileEnable);
-            this.LogFileSetupGroup.Controls.Add(this.LogFileIncVIN);
-            this.LogFileSetupGroup.Controls.Add(this.LogFileAutoName);
-            this.LogFileSetupGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.LogFileSetupGroup.Location = new System.Drawing.Point(335, 8);
-            this.LogFileSetupGroup.Margin = new System.Windows.Forms.Padding(4);
-            this.LogFileSetupGroup.Name = "LogFileSetupGroup";
-            this.LogFileSetupGroup.Padding = new System.Windows.Forms.Padding(4);
-            this.LogFileSetupGroup.Size = new System.Drawing.Size(316, 221);
-            this.LogFileSetupGroup.TabIndex = 11;
-            this.LogFileSetupGroup.TabStop = false;
-            this.LogFileSetupGroup.Text = "Logging To File Setup";
-            // 
-            // LogFileAutoName
-            // 
-            this.LogFileAutoName.AutoSize = true;
-            this.LogFileAutoName.Location = new System.Drawing.Point(7, 54);
-            this.LogFileAutoName.Name = "LogFileAutoName";
-            this.LogFileAutoName.Size = new System.Drawing.Size(182, 29);
-            this.LogFileAutoName.TabIndex = 9;
-            this.LogFileAutoName.Text = "Auto File Name";
-            this.LogFileAutoName.UseVisualStyleBackColor = true;
-            // 
-            // LogFileIncVIN
-            // 
-            this.LogFileIncVIN.AutoSize = true;
-            this.LogFileIncVIN.Location = new System.Drawing.Point(7, 80);
-            this.LogFileIncVIN.Name = "LogFileIncVIN";
-            this.LogFileIncVIN.Size = new System.Drawing.Size(231, 29);
-            this.LogFileIncVIN.TabIndex = 10;
-            this.LogFileIncVIN.Text = "Include VIN in Name";
-            this.LogFileIncVIN.UseVisualStyleBackColor = true;
-            // 
-            // LogFileEnable
-            // 
-            this.LogFileEnable.AutoSize = true;
-            this.LogFileEnable.Location = new System.Drawing.Point(7, 28);
-            this.LogFileEnable.Name = "LogFileEnable";
-            this.LogFileEnable.Size = new System.Drawing.Size(249, 29);
-            this.LogFileEnable.TabIndex = 11;
-            this.LogFileEnable.Text = "Enable Logging to File";
-            this.LogFileEnable.UseVisualStyleBackColor = true;
-            // 
-            // LogFileSetupLabel
-            // 
-            this.LogFileSetupLabel.AutoSize = true;
-            this.LogFileSetupLabel.Location = new System.Drawing.Point(7, 112);
-            this.LogFileSetupLabel.Name = "LogFileSetupLabel";
-            this.LogFileSetupLabel.Size = new System.Drawing.Size(130, 25);
-            this.LogFileSetupLabel.TabIndex = 12;
-            this.LogFileSetupLabel.Text = "Base Name:";
-            // 
-            // LogFileBaseName
-            // 
-            this.LogFileBaseName.Location = new System.Drawing.Point(143, 109);
-            this.LogFileBaseName.Name = "LogFileBaseName";
-            this.LogFileBaseName.Size = new System.Drawing.Size(166, 30);
-            this.LogFileBaseName.TabIndex = 13;
-            // 
-            // LogFileSelectFolderButt
-            // 
-            this.LogFileSelectFolderButt.Location = new System.Drawing.Point(7, 177);
-            this.LogFileSelectFolderButt.Name = "LogFileSelectFolderButt";
-            this.LogFileSelectFolderButt.Size = new System.Drawing.Size(302, 34);
-            this.LogFileSelectFolderButt.TabIndex = 14;
-            this.LogFileSelectFolderButt.Text = "Select Folder";
-            this.LogFileSelectFolderButt.UseVisualStyleBackColor = true;
-            this.LogFileSelectFolderButt.Click += new System.EventHandler(this.LogFileSelectFolderButt_Click);
-            // 
-            // LogFileFolder
-            // 
-            this.LogFileFolder.Location = new System.Drawing.Point(7, 144);
-            this.LogFileFolder.Name = "LogFileFolder";
-            this.LogFileFolder.Size = new System.Drawing.Size(302, 30);
-            this.LogFileFolder.TabIndex = 15;
+            this.TCPConnButt.Location = new System.Drawing.Point(1205, 9);
+            this.TCPConnButt.Name = "TCPConnButt";
+            this.TCPConnButt.Size = new System.Drawing.Size(143, 30);
+            this.TCPConnButt.TabIndex = 21;
+            this.TCPConnButt.Text = "TCP Connect";
+            this.TCPConnButt.UseVisualStyleBackColor = true;
+            this.TCPConnButt.Click += new System.EventHandler(this.TCPConnButt_Click);
             // 
             // Form1
             // 
@@ -3346,6 +3358,8 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
+            this.LogFileSetupGroup.ResumeLayout(false);
+            this.LogFileSetupGroup.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.SerComGroup.ResumeLayout(false);
@@ -3360,8 +3374,6 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.LogFileSetupGroup.ResumeLayout(false);
-            this.LogFileSetupGroup.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3602,6 +3614,7 @@
         private System.Windows.Forms.CheckBox LogFileEnable;
         private System.Windows.Forms.CheckBox LogFileIncVIN;
         private System.Windows.Forms.CheckBox LogFileAutoName;
+        private System.Windows.Forms.Button TCPConnButt;
     }
 }
 
