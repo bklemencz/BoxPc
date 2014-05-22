@@ -877,29 +877,48 @@ namespace IboxTestTCP
                     {
                         LastSerialLine += LastSerialChar;
                     }
+                    /////////////////////////////////////////////////////////////////////
+                    //// EOL Got
+                    ////////////////////////////////////////////////////////////////////
                     else
                     {
-                        LastItems = LastSerialLine.Replace("\n", "").Replace("\r", "").Split(',');
-                        TimeRead = Int32.Parse(LastItems[0]);
-                        MaxTime = TimeRead;
-                        for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                        ////////////////////////////////////////////////////////////////////////////
+                        ///// Streaming DATA recieved
+                        ////////////////////////////////////////////////////////////////////////////
+                        if (!LastSerialLine.StartsWith("/"))
                         {
+                            LastItems = LastSerialLine.Replace("\n", "").Replace("\r", "").Split(',');
+                            TimeRead = Int32.Parse(LastItems[0]);
+                            MaxTime = TimeRead;
+                            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                            {
 
-                            if (LastItems[i + 1] != "")
-                            {
-                                Lines[i].Add(TimeRead, Double.Parse(LastItems[i + 1]));
-                                LastValues[i] = Double.Parse(LastItems[i + 1]);
+                                if (LastItems[i + 1] != "")
+                                {
+                                    Lines[i].Add(TimeRead, Double.Parse(LastItems[i + 1]));
+                                    LastValues[i] = Double.Parse(LastItems[i + 1]);
+                                }
+                                else
+                                {
+                                    Lines[i].Add(TimeRead, LastValues[i]);
+                                }
                             }
-                            else
-                            {
-                                Lines[i].Add(TimeRead, LastValues[i]);
-                            }
+                            LastSerialLine = "";
+                        } else
+                        /////////////////////////////////////////////////////////////////////////
+                        ///// Command Recieved
+                        /////////////////////////////////////////////////////////////////////////
+                        {
+                            SerialErrorParse(LastSerialLine);
+                            LastSerialLine = "";
                         }
-                        LastSerialLine = "";
                     }
                 }
             }
             else
+            //////////////////////////////
+            ////  PORT NOT OPEN
+            /////////////////////////////
             {
                 MessageBox.Show("Serial Port not open!");
             }
