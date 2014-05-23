@@ -276,17 +276,17 @@ namespace IboxTestTCP
                 IboxTestTCP.Form1.MaxTime = 0;
                 for (int i = 0; i < 24; i++)
                 IboxTestTCP.Form1.Lines[i].Clear();
-                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = true;
+                //IboxTestTCP.Form1.ShVarUpdTimer.Enabled = true;
                 StrtBtn.Text = "Stop";
                 GrUpdTimer1.Enabled = true;
-                IboxTestTCP.Form1.ShTCPTimer.Enabled = true;
+                //IboxTestTCP.Form1.ShTCPTimer.Enabled = true;
             }
             else
             {
-                IboxTestTCP.Form1.ShVarUpdTimer.Enabled = false;
+                //IboxTestTCP.Form1.ShVarUpdTimer.Enabled = false;
                 StrtBtn.Text = "Start";
                 GrUpdTimer1.Enabled = false;
-                IboxTestTCP.Form1.ShTCPTimer.Enabled = false;
+                //IboxTestTCP.Form1.ShTCPTimer.Enabled = false;
             }
 
 

@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.TCPConnButt = new System.Windows.Forms.Button();
             this.BoxUpdateButt = new System.Windows.Forms.Button();
             this.StatusReqButt = new System.Windows.Forms.Button();
             this.ConnButt = new System.Windows.Forms.Button();
@@ -262,7 +263,7 @@
             this.TCPReadTimer = new System.Windows.Forms.Timer(this.components);
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.SerialReadTimer = new System.Windows.Forms.Timer(this.components);
-            this.TCPConnButt = new System.Windows.Forms.Button();
+            this.TCPStreamButt = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.Var24Gr.SuspendLayout();
@@ -317,6 +318,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.TCPStreamButt);
             this.tabPage1.Controls.Add(this.TCPConnButt);
             this.tabPage1.Controls.Add(this.BoxUpdateButt);
             this.tabPage1.Controls.Add(this.StatusReqButt);
@@ -359,6 +361,16 @@
             this.tabPage1.Text = "Variable View";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // TCPConnButt
+            // 
+            this.TCPConnButt.Location = new System.Drawing.Point(1205, 9);
+            this.TCPConnButt.Name = "TCPConnButt";
+            this.TCPConnButt.Size = new System.Drawing.Size(143, 30);
+            this.TCPConnButt.TabIndex = 21;
+            this.TCPConnButt.Text = "TCP Connect";
+            this.TCPConnButt.UseVisualStyleBackColor = true;
+            this.TCPConnButt.Click += new System.EventHandler(this.TCPConnButt_Click);
+            // 
             // BoxUpdateButt
             // 
             this.BoxUpdateButt.Enabled = false;
@@ -395,7 +407,7 @@
             // label70
             // 
             this.label70.AutoSize = true;
-            this.label70.Location = new System.Drawing.Point(1611, 15);
+            this.label70.Location = new System.Drawing.Point(1601, 16);
             this.label70.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label70.Name = "label70";
             this.label70.Size = new System.Drawing.Size(54, 17);
@@ -3282,15 +3294,15 @@
             // 
             this.SerialReadTimer.Tick += new System.EventHandler(this.SerialReadTimer_Tick);
             // 
-            // TCPConnButt
+            // TCPStreamButt
             // 
-            this.TCPConnButt.Location = new System.Drawing.Point(1205, 9);
-            this.TCPConnButt.Name = "TCPConnButt";
-            this.TCPConnButt.Size = new System.Drawing.Size(143, 30);
-            this.TCPConnButt.TabIndex = 21;
-            this.TCPConnButt.Text = "TCP Connect";
-            this.TCPConnButt.UseVisualStyleBackColor = true;
-            this.TCPConnButt.Click += new System.EventHandler(this.TCPConnButt_Click);
+            this.TCPStreamButt.Location = new System.Drawing.Point(1354, 9);
+            this.TCPStreamButt.Name = "TCPStreamButt";
+            this.TCPStreamButt.Size = new System.Drawing.Size(143, 30);
+            this.TCPStreamButt.TabIndex = 22;
+            this.TCPStreamButt.Text = "TCP Stream";
+            this.TCPStreamButt.UseVisualStyleBackColor = true;
+            this.TCPStreamButt.Click += new System.EventHandler(this.TCPStreamButt_Click);
             // 
             // Form1
             // 
@@ -3615,6 +3627,7 @@
         private System.Windows.Forms.CheckBox LogFileIncVIN;
         private System.Windows.Forms.CheckBox LogFileAutoName;
         private System.Windows.Forms.Button TCPConnButt;
+        private System.Windows.Forms.Button TCPStreamButt;
     }
 }
 

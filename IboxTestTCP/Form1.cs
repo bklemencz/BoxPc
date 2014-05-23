@@ -61,7 +61,7 @@ namespace IboxTestTCP
         public VarRecord_t[] IboxCSVread = new VarRecord_t[2500];
         public VarRecord_t[] TempVarRec = new VarRecord_t[50];
         public int ImpVariableCount, SelectedPage;
-        public string LastSerialLine;
+        public string LastSerialLine,LastTCPLine;
         public FileStream LogFileStream;
         public StreamWriter LogFileWriter;
         public TcpClient MyClient;
@@ -472,6 +472,7 @@ namespace IboxTestTCP
         {
             if (VarupdateTimer.Enabled)
             {
+                SerialReadTimer.Enabled = false;
                 if (StopSerialStream())
                 {
                     StreamButt.Text = "Start Stream";
@@ -505,22 +506,62 @@ namespace IboxTestTCP
         private void TCPReadTimer_Tick(object sender, EventArgs e)
         {
 
-            if (Stopper1.IsRunning)
+            
+            string[] LastItems;
+            int TimeRead = 0;
+            if (MyClient.Connected)
             {
-                Stopper1.Stop();
-                label70.Text = Stopper1.ElapsedMilliseconds.ToString();
-            }
-            else
+                while (MyNetworkStream.DataAvailable)
+                {
+                    try
+                    {
+                        LastTCPLine = MyNetworkReader.ReadLine();
+                    } 
+                    catch
+                    {
+                        MessageBox.Show("TCP Error!");
+                        AddStatusMessage("TCP Read Error. Please restart!");
+                    }
+                    
+                        if (LastTCPLine.Replace("\r","").Replace("\n","").StartsWith("/ERROR") || (LastTCPLine.Length<3))
+                        {
+                            AddStatusMessage("Error: " + LastTCPLine);
+                            LastTCPLine = "";
+                        }
+                        else
+                        {
+                            LastItems = LastTCPLine.Replace("\n", "").Replace("\r", "").Split(',');
+                            if (LastItems[0] == "") LastItems[0] = MaxTime.ToString();                  //If no timestamp use the last one
+                            TimeRead = Int32.Parse(LastItems[0]);
+                            MaxTime = TimeRead;
+
+                            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+                            {
+
+                                if (LastItems[i + 1] != "")
+                                {
+                                    Lines[i].Add(TimeRead, Double.Parse(LastItems[i + 1]));
+                                    LastValues[i] = Double.Parse(LastItems[i + 1]);
+                                }
+                                else
+                                {
+                                    Lines[i].Add(TimeRead, LastValues[i]);
+                                }
+                            }                                                       // End of variable read
+                            if (LogFileEnable.Checked)                              // If logging enabled write values to the file
+                            {
+                                LogFileAddLastValues();
+                            }                                                      // End of file writer
+                            LastTCPLine = "";
+                        }                                                          // End of line parse
+                                                                                 // End of serial buffer read
+                }                                                                  // End of serial buffer check 
+            }                                                                      // End of serial open condition
+            else                                                                   // If serial port is not open, shouldnt happen here
             {
-                Stopper1.Reset();
-                Stopper1.Start();
+                MessageBox.Show("No Active TCP Connection!");
+                AddStatusMessage("No Active TCP Connection! Internal software error, please restart!");
             }
-            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
-            {
-                Lines[i].Add(counter * 50, counter * 2 * (i + 1));
-                if (counter * 50 > MaxTime) MaxTime = counter * 50;
-            }
-            counter++;
         }
 
         private void GrUpdRateSel_ValueChanged(object sender, EventArgs e)
@@ -931,7 +972,7 @@ namespace IboxTestTCP
                 // AddStatusMessage("Connecting on serial bus:" + serialPort1.PortName);
                 SerialHandShake();
                 ConnButt.Text = "Disconnect";
-                if (LogFileEnable.Checked) OpenLogFile();
+                if (LogFileEnable.Checked) LogFileOpen();
                 StatusReqButt.Enabled = true;
                 BoxUpdateButt.Enabled = true;
                 StreamButt.Enabled = true;
@@ -954,9 +995,9 @@ namespace IboxTestTCP
             }
         }
 
-        private void OpenLogFile()
+        private void LogFileOpen()
         {
-            string LogFileName = LogFileFolder.Text + "\\" + DateTime.Now.ToString("yyMMdd_hmmss_") + LogFileBaseName.Text + "_" + Pages[VarViewPgSelCombo.SelectedIndex].Name + ".csv";
+            string LogFileName = LogFileFolder.Text + "\\" + DateTime.Now.ToString("yyMMdd_HHmmss_") + LogFileBaseName.Text + "_" + Pages[VarViewPgSelCombo.SelectedIndex].Name + ".csv";
             LogFileStream = new FileStream(LogFileName, FileMode.Create);
             LogFileWriter = new StreamWriter(LogFileStream, Encoding.ASCII);
             AddStatusMessage("Log file Created: " + LogFileName);
@@ -966,6 +1007,17 @@ namespace IboxTestTCP
                 OutPutline += "," + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Name;
             }
             LogFileWriter.WriteLine(OutPutline);
+        }
+
+        private void LogFileAddLastValues()
+        {
+            string WriteLn = "";
+            WriteLn += MaxTime.ToString();
+            for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
+            {
+                WriteLn += "," + LastValues[i].ToString();//string.Format("{0:0.0000}"));
+            }
+            LogFileWriter.WriteLine(WriteLn);
         }
 
         private void SerialReadTimer_Tick(object sender, EventArgs e)
@@ -1011,13 +1063,7 @@ namespace IboxTestTCP
                             }                                                       // End of variable read
                             if (LogFileEnable.Checked)                              // If logging enabled write values to the file
                             {
-                                string WriteLn = "";
-                                WriteLn += MaxTime.ToString();
-                                for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
-                                {
-                                    WriteLn += "," + LastValues[i].ToString(string.Format("{0:0.0000}"));
-                                }
-                                LogFileWriter.WriteLine(WriteLn);
+                                LogFileAddLastValues();
                             }                                                      // End of file writer
                             LastSerialLine = "";
                         }                                                          // End of line parse
@@ -1116,6 +1162,7 @@ namespace IboxTestTCP
                         MyNetworkReader = new StreamReader(MyNetworkStream);
                         MyNetworkWriter = new StreamWriter(MyNetworkStream);
                         TCPHandShake();
+                        if (LogFileEnable.Checked) LogFileOpen();
 
                     }
                 }
@@ -1136,6 +1183,16 @@ namespace IboxTestTCP
                 MyClient.Close();
                 AddStatusMessage("TCP Connection Closed!");
                 TCPConnButt.Text = "TCP Connect";
+                LogFileWriter.Flush();
+                LogFileWriter.Close();
+                AddStatusMessage("Log File:  " + LogFileStream.Name + " Closed!");
+                LogFileStream.Close();
+                BoxStatustoolStrip.ForeColor = Color.Red;
+                BoxStatustoolStrip.Text = "BOX Offline";
+                toolStripStatusLabel2.ForeColor = Color.Red;
+                toolStripStatusLabel2.Text = "Conf Empty";
+                toolStripStreamingStatus.ForeColor = Color.Red;
+                toolStripStreamingStatus.Text = "Streaming: Off";
                 MyClient = new TcpClient();
             }
 
@@ -1156,9 +1213,11 @@ namespace IboxTestTCP
  
                 try
                 {
-                    MyNetworkWriter.WriteLine("");
-                    LastLine = MyNetworkReader.ReadLine();
+                    //MyNetworkWriter.WriteLine("");
+                   // LastLine = MyNetworkReader.ReadLine();
                     MyNetworkWriter.WriteLine("/VER");
+                    MyNetworkWriter.Flush();
+                    AddStatusMessage("Getting First TCP Line! ");
                     LastLine = MyNetworkReader.ReadLine();
 
                     if (LastLine.StartsWith("/ERROR"))
@@ -1203,13 +1262,13 @@ namespace IboxTestTCP
                 {
                     LastLine = "/PAGE/" + Pages[VarViewPgSelCombo.SelectedIndex].VarCount.ToString();
                     MyNetworkWriter.WriteLine(LastLine);
-
+                    MyNetworkWriter.Flush();
                     LastLine = MyNetworkReader.ReadLine();
-
-                    if (LastLine.Contains("/OK"))
+                    if (LastLine.StartsWith("/OK"))
                     {
                         for (int i = 0; i < Pages[VarViewPgSelCombo.SelectedIndex].VarCount; i++)
                         {
+                            
                             LastLine = "/VAR";
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Name;
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Address.ToString();
@@ -1217,8 +1276,8 @@ namespace IboxTestTCP
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Mult.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Offset.ToString();
                             LastLine += '/' + Pages[VarViewPgSelCombo.SelectedIndex].Variables[i].Ratems.ToString();
-
                             MyNetworkWriter.WriteLine(LastLine);
+                            MyNetworkWriter.Flush();
 
                             LastLine = MyNetworkReader.ReadLine();  //Wait for ACK
 
@@ -1249,6 +1308,110 @@ namespace IboxTestTCP
                 return false;
             }
             return true;
-        }                                   // End of tcphandshake
+        }   // End of tcphandshake
+
+        private void TCPStreamButt_Click(object sender, EventArgs e)
+        {
+            if (VarupdateTimer.Enabled)
+            {
+                TCPReadTimer.Enabled = false;
+                if (StopTCPStream())
+                {
+                    TCPStreamButt.Text = "TCP Strt Stream";
+                    toolStripStreamingStatus.ForeColor = Color.Red;
+                    toolStripStreamingStatus.Text = "Streaming: Off";
+                    VarupdateTimer.Enabled = false;
+                    TCPReadTimer.Enabled = false;
+                    TCPConnButt.Enabled = true;
+                }
+            }
+            else
+            {
+                if (StartTCPStream())
+                {
+                    TCPStreamButt.Text = "TCP Stop Stream";
+                    toolStripStreamingStatus.ForeColor = Color.Green;
+                    toolStripStreamingStatus.Text = "Streaming: On";
+                    VarupdateTimer.Enabled = true;
+                    TCPReadTimer.Enabled = true;
+                    TCPConnButt.Enabled = false;
+                }
+            }
+        }
+
+        private void PurgeTCP()
+        {           
+            MyNetworkWriter.Flush();
+            MyNetworkReader.DiscardBufferedData();
+        }
+
+        private bool StartTCPStream()
+        {
+            string LastLine;
+            if (MyClient.Connected && (BoxState == 3))
+            {
+                try
+                {
+                    MyNetworkWriter.WriteLine("/STRTSTREAM");
+                    MyNetworkWriter.Flush();
+                    LastLine = MyNetworkReader.ReadLine().Replace("\r", "").Replace("\n", "");
+                    if (LastLine == "/OK")
+                    {
+                        //PurgeSerial();
+                        BoxState = 4;
+                        AddStatusMessage("TCP Streaming started! New Box State: " + BoxState.ToString());
+                        return true;
+                    }
+                }
+                catch (Exception Ex)
+                {
+                    MessageBox.Show("Communication Protocol Error!\nPlease disconnect and reconnect!");
+                    BoxState = 0;
+                    return false;
+                }
+            }
+            else
+            {
+                MessageBox.Show("No active TCP Connection, please connect first!");
+                return false;
+            }
+            return false;
+        }
+
+        private bool StopTCPStream()
+        {
+            string LastLine;
+            if (MyClient.Connected && (BoxState == 4))
+            {
+                try
+                {
+                    PurgeTCP();
+                    MyNetworkWriter.WriteLine("/DISCONNECT");
+                    MyNetworkWriter.Flush();
+                    LastLine = MyNetworkReader.ReadLine().Replace("\r", "").Replace("\n", "");
+                    
+                    if (LastLine == "/OK")
+                    {
+                        PurgeTCP();
+                        BoxState = 3;
+                        AddStatusMessage("TCP Streaming stopped! New Box State: " + BoxState.ToString());
+
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Communication Protocol Error!\nPlease Disconnect and reconnect!");
+                    
+                    return false;
+                }
+            }
+            else
+            {
+                MessageBox.Show("No TCP Connection");
+                return false;
+            }
+            return false;
+        }                                   
     }
 }
